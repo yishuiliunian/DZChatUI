@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'DZChatUI_Example', :exclusive => true do
+  pod 'DZChatUI', :path => '../'
+end
+
+target 'DZChatUI_Tests', :exclusive => true do
+  pod 'DZChatUI', :path => '../'
+
+  pod 'FBSnapshotTestCase'
+end
