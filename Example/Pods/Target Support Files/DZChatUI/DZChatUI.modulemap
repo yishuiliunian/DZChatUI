@@ -1,0 +1,6 @@
+framework module DZChatUI {
+  umbrella header "DZChatUI-umbrella.h"
+
+  export *
+  module * { export * }
+}

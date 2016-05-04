@@ -31,7 +31,7 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'DZChatUI/Classes/**/*'
-  
+
   # s.resource_bundles = {
   #   'DZChatUI' => ['DZChatUI/Assets/*.png']
   # }
@@ -39,4 +39,12 @@ TODO: Add long description of the pod here.
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
+  s.dependency "DZKeyboardAdjust"
+  s.dependency 'DZKeyboardManager'
+  s.dependency 'ElementKit'
+  s.dependency 'DZAdjustFrame'
+  s.dependency 'DZProgrameDefines'
+  s.dependency 'DZCache'
+  s.dependency 'DZLayout'
+  s.dependency 'DZGeometryTools'
 end

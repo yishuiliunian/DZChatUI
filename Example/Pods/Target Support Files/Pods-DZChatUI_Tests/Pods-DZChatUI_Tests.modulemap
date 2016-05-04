@@ -1,0 +1,6 @@
+framework module Pods_DZChatUI_Tests {
+  umbrella header "Pods-DZChatUI_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

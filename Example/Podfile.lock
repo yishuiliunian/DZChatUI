@@ -1,0 +1,21 @@
+PODS:
+  - DZChatUI (0.1.0)
+  - FBSnapshotTestCase (2.1.0):
+    - FBSnapshotTestCase/SwiftSupport (= 2.1.0)
+  - FBSnapshotTestCase/Core (2.1.0)
+  - FBSnapshotTestCase/SwiftSupport (2.1.0):
+    - FBSnapshotTestCase/Core
+
+DEPENDENCIES:
+  - DZChatUI (from `../`)
+  - FBSnapshotTestCase
+
+EXTERNAL SOURCES:
+  DZChatUI:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  DZChatUI: dddecb2a11b1b90ee5287a8f292d9c4bc74b09a7
+  FBSnapshotTestCase: 366ecd378511d7716c79991cd8067d1eed23578d
+
+COCOAPODS: 0.39.0
