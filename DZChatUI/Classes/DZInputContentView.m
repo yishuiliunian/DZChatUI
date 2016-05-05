@@ -27,6 +27,10 @@
     CGRectDivide(self.bounds, &tbR, &topR, _toolBar.adjustHeight, CGRectMaxYEdge);
     _contentView.frame = topR;
     _toolBar.frame=tbR;
+    
+    _toolBar.backgroundColor = [UIColor grayColor];
+    self.backgroundColor = [UIColor redColor];
+    _contentView.backgroundColor = [UIColor greenColor];
 }
 
 

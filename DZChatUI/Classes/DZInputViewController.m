@@ -46,12 +46,13 @@
     
     [_inputContentView.toolBar.sendButton setTitle:@"记录" forState:UIControlStateNormal];
     [_inputContentView.toolBar.sendButton addTarget:self action:@selector(saveNote) forControlEvents:UIControlEventTouchUpInside];
+    
 }
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+
 }
 
 
