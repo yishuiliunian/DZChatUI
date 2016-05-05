@@ -44,8 +44,6 @@
     //
     self.contentView = _inputContentView;
     
-    [_inputContentView.toolBar.sendButton setTitle:@"记录" forState:UIControlStateNormal];
-    [_inputContentView.toolBar.sendButton addTarget:self action:@selector(saveNote) forControlEvents:UIControlEventTouchUpInside];
     
 }
 
