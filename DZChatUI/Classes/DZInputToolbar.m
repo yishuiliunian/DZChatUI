@@ -41,7 +41,6 @@ CGSize const kButtonSize = {35, 35};
     _textView.delegate = self;
     [self showKeyboardButtonImages];
     [_keyboardButton addTarget:self action:@selector(showVoiceInput) forControlEvents:UIControlEventTouchUpInside];
-    _keyboardButton.backgroundColor = [UIColor redColor];
     
     //
     [_emojiButton addTarget:self action:@selector(showEmoji) forControlEvents:UIControlEventTouchUpInside];
@@ -49,6 +48,7 @@ CGSize const kButtonSize = {35, 35};
     [_emojiButton setImage:LoadPodImage(ToolViewEmotionHL) forState:UIControlStateNormal];
     //
     _textView.enablesReturnKeyAutomatically = YES;
+    _textView.backgroundColor = [UIColor whiteColor];
     
     return self;
 }
@@ -135,10 +135,29 @@ CGSize const kButtonSize = {35, 35};
 
 - (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    _textView.returnKeyType = UIReturnKeyDone;
+    textView.returnKeyType = UIReturnKeyDone;
+    if ([text isEqualToString:@"\n"]) {
+        [self sendText];
+        return NO;
+    }
     return YES;
 }
 
+- (void) sendText
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(inputToolbar:sendText:)]) {
+            [self.delegate inputToolbar:self sendText:_textView.text];
+        }
+        _textView.text = nil;
+        [_textView resignFirstResponder];
+    });
+}
 
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView
+{
+    textView.returnKeyType = UIReturnKeySend;
+    return YES;
+}
 
 @end

@@ -8,16 +8,17 @@
 
 #import "DZInputViewController.h"
 #import "DZInputContentView.h"
+#import "DZAIOViewController.h"
 @interface DZInputViewController ()
 {
     DZInputContentView* _inputContentView;
 }
-@property (nonatomic, strong) UIViewController* rootViewController;
+@property (nonatomic, strong) DZAIOViewController* rootViewController;
 @end
 
 @implementation DZInputViewController
 
-- (instancetype) initWithElement:(EKElement *)ele contentViewController:(UIViewController *)viewController
+- (instancetype) initWithElement:(EKElement *)ele contentViewController:(DZAIOViewController *)viewController
 {
     self = [self initWithNibName:nil bundle:nil];
     if (!self) {
@@ -43,7 +44,7 @@
     [_inputContentView addSubview:_rootViewController.view];
     //
     self.contentView = _inputContentView;
-    
+    _inputContentView.toolBar.delegate = _rootViewController.tableElement;
     
 }
 

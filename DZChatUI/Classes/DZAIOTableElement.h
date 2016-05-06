@@ -7,7 +7,7 @@
 //
 
 #import <ElementKit/ElementKit.h>
-
-@interface DZAIOTableElement : EKAdjustTableElement
+#import "DZInputToolbar.h"
+@interface DZAIOTableElement : EKAdjustTableElement <DZInputToolbarDelegate>
 
 @end
