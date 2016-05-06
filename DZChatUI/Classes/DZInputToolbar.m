@@ -10,6 +10,10 @@
 #import "DZProgramDefines.h"
 #import "DZImageCache.h"
 #import "DZGeometryTools.h"
+#import "DZEmojiActionElement.h"
+#import "YHInputActionViewController.h"
+
+
 #define LoadPodImage(name)   [UIImage imageNamed:@"DZChatUI.bundle/"#name inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil]
 
 
@@ -17,7 +21,11 @@ CGFloat const kSTMinHeight = 44;
 CGSize const kButtonSize = {35, 35};
 
 @interface DZInputToolbar () <UITextViewDelegate>
-
+{
+    YHInputActionViewController* _emojiViewController;
+    YHInputActionViewController* _actionViewController;
+    BOOL _actionShowed;
+}
 @end
 
 
@@ -49,12 +57,14 @@ CGSize const kButtonSize = {35, 35};
     //
     _textView.enablesReturnKeyAutomatically = YES;
     _textView.backgroundColor = [UIColor whiteColor];
-    
+    _emojiViewController = [[YHInputActionViewController alloc] initWithElement:[DZEmojiActionElement new]];
+    _actionShowed = NO;
     return self;
 }
 - (void) showEmoji
 {
-    
+    _actionShowed = YES;
+    [self addSubview:_emojiViewController.view];
 }
 
 
@@ -83,11 +93,13 @@ CGSize const kButtonSize = {35, 35};
         [_keyboardButton setImage:LoadPodImage(ToolViewInputVoice) forState:UIControlStateNormal];
         [_keyboardButton setImage:LoadPodImage(ToolViewInputVoiceHL) forState:UIControlStateHighlighted];
     }
-
 }
+
+
 - (void) handleAdjustFrame
 {
     self.adjustHeight = MAX(self.textView.adjustHeight, 44) + 10;
+
 }
 
 - (void) layoutSubviews

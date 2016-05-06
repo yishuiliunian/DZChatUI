@@ -9,9 +9,11 @@
 #import "DZInputViewController.h"
 #import "DZInputContentView.h"
 #import "DZAIOViewController.h"
+
 @interface DZInputViewController ()
 {
     DZInputContentView* _inputContentView;
+
 }
 @property (nonatomic, strong) DZAIOViewController* rootViewController;
 @end
@@ -46,7 +48,11 @@
     self.contentView = _inputContentView;
     _inputContentView.toolBar.delegate = _rootViewController.tableElement;
     
+
+    //
+    
 }
+
 
 
 - (void)viewDidLoad {

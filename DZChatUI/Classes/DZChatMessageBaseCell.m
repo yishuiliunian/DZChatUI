@@ -21,10 +21,6 @@
     INIT_SUBVIEW_UIImageView(self.contentView, _bubleImageView);
     INIT_SUBVIEW_UILabel(self.contentView, _nickLabel);
     
-#ifdef DEBUG
-    _avatarImageView.backgroundColor = [UIColor redColor];
-    _nickLabel.backgroundColor = [UIColor blueColor];
-#endif
     return self;
 }
 
