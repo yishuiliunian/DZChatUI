@@ -1,21 +1,22 @@
 //
-//  YHInputActionViewController.m
+//  DZInputActionViewController.m
 //  Pods
 //
 //  Created by baidu on 16/5/6.
 //
 //
 
-#import "YHInputActionViewController.h"
+#import "DZInputActionViewController.h"
 
-@interface YHInputActionViewController ()
+@interface DZInputActionViewController ()
 
 @end
 
-@implementation YHInputActionViewController
+@implementation DZInputActionViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
     // Do any additional setup after loading the view.
 }
 

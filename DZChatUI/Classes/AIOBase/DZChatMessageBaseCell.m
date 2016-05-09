@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "DZChatMessageBaseCell.h"
 #import "DZGeometryTools.h"
-
+#import "DZProgrameDefines.h"
 @implementation DZChatMessageBaseCell
 - (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

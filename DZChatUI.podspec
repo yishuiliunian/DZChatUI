@@ -47,4 +47,6 @@ TODO: Add long description of the pod here.
   s.dependency 'DZCache'
   s.dependency 'DZLayout'
   s.dependency 'DZGeometryTools'
+  s.dependency 'TransitionKit'
+  s.dependency 'DZAudio'
 end

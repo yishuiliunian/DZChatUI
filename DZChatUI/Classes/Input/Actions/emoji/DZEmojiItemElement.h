@@ -9,6 +9,6 @@
 #import <ElementKit/ElementKit.h>
 
 @interface DZEmojiItemElement : EKCollectionCellElement
-@property (nonatomic, strong, readonly) UIImage* image;
-- (instancetype) initWithImage:(UIImage*)image;
+@property (nonatomic, strong, readonly) NSString* emoji;
+- (instancetype) initWithEmoji:(NSString*)emoji;
 @end

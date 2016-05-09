@@ -15,4 +15,9 @@
     [super viewDidLoad];
     self.edgesForExtendedLayout = UIRectEdgeNone;
 }
+- (void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.interactivePopGestureRecognizer.delaysTouchesBegan = NO;
+}
 @end
