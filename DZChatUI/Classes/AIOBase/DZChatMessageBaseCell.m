@@ -20,7 +20,7 @@
     INIT_SUBVIEW_UIImageView(self.contentView, _avatarImageView);
     INIT_SUBVIEW_UIImageView(self.contentView, _bubleImageView);
     INIT_SUBVIEW_UILabel(self.contentView, _nickLabel);
-    
+    INIT_SUBVIEW(self.contentView,FLAnimatedImageView ,_sendStatusImageView);
     return self;
 }
 

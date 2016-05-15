@@ -10,5 +10,6 @@
 #import "DZInputToolbar.h"
 @interface DZAIOTableElement : EKAdjustTableElement <DZInputToolbarDelegate>
 
+- (void) handleLoadOldMessage;
 - (void) scrollToEnd;
 @end

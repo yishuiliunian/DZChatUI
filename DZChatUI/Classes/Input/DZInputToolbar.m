@@ -480,7 +480,7 @@ CGFloat const kActionHeight = 271;
 {
     if (flag) {
         if ([self.delegate respondsToSelector:@selector(inputToolbar:sendVoice:)]) {
-            [self.delegate inputToolbar:self sendVoice:recorder.url.path];
+            [self.delegate inputToolbar:self sendVoice:recorder];
         }
     }
 }

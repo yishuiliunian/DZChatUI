@@ -11,13 +11,14 @@
 
 
 @class DZInputToolbar;
+@class AVAudioRecorder;
 @protocol DZInputToolbarDelegate 
 
 - (void) inputToolbar:(DZInputToolbar*)toolbar sendText:(NSString*)text;
 
 - (void) inputToolbar:(DZInputToolbar *)toolbar sendImage:(UIImage*)image;
 
-- (void) inputToolbar:(DZInputToolbar *)toolbar sendVoice:(NSString *)voicePath;
+- (void) inputToolbar:(DZInputToolbar *)toolbar sendVoice:(AVAudioRecorder*)recorder;
 @end
 
 @protocol DZInputToolBarUIDelegate <NSObject>

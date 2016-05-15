@@ -49,4 +49,6 @@ TODO: Add long description of the pod here.
   s.dependency 'DZGeometryTools'
   s.dependency 'TransitionKit'
   s.dependency 'DZAudio'
+  s.dependency 'FLAnimatedImage'
+  s.dependency 'MJRefresh'
 end
