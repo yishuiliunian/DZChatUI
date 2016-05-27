@@ -18,6 +18,7 @@
 #import <TransitionKit/TransitionKit.h>
 #import "DZVoiceInputView.h"
 #import <DZAudio/DZAudio.h>
+#import "HexColors.h"
 #define LoadPodImage(name)   [UIImage imageNamed:@"DZChatUI.bundle/"#name inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil]
 
 static NSString* const kEventText = @"intext";
@@ -44,6 +45,8 @@ CGFloat const kActionHeight = 271;
     
     CFTimeInterval _recordBeginTime;
 }
+@property (nonatomic, strong) UIImageView* backgroundImageView;
+@property (nonatomic, assign) BOOL showingBottomFunctions;
 @end
 
 
@@ -97,6 +100,9 @@ CGFloat const kActionHeight = 271;
     _actionShowed = YES;
     [self addSubview:_actionViewController.view];
     [self handleAdjustFrame];
+    self.showingBottomFunctions = YES;
+    [self sendDidShowMoreFunctionsDelegate];
+
 }
 - (void) showMoreAction
 {
@@ -109,6 +115,7 @@ CGFloat const kActionHeight = 271;
     SetButtonImages(_actionButton, ToolViewInputVoice, ToolViewInputVoiceHL);
     _actionShowed = NO;
     [self handleAdjustFrame];
+    self.showingBottomFunctions = NO;
 }
 
 - (void) hidenMoreAction
@@ -125,10 +132,12 @@ CGFloat const kActionHeight = 271;
     _actionShowed = YES;
     [self addSubview:_emojiViewController.view];
     [self handleAdjustFrame];
+    self.showingBottomFunctions = YES;
+    [self sendDidShowMoreFunctionsDelegate];
+
 }
 - (void) showEmojiAction
 {
-
     [_stateMachine fireEvent:kEventEmoji userInfo:nil error:nil];
 }
 
@@ -138,6 +147,8 @@ CGFloat const kActionHeight = 271;
     SetButtonImages(_emojiButton, ToolViewInputVoice, ToolViewInputVoiceHL);
     _actionShowed = NO;
     [self handleAdjustFrame];
+    self.showingBottomFunctions = NO;
+    
 }
 - (void) hidenEmojiAction
 {
@@ -148,6 +159,15 @@ CGFloat const kActionHeight = 271;
 - (void) showTextActionExe
 {
     [_textView becomeFirstResponder];
+    self.showingBottomFunctions = YES;
+    [self sendDidShowMoreFunctionsDelegate];
+}
+
+- (void) sendDidShowMoreFunctionsDelegate
+{
+    if ([self.delegate respondsToSelector:@selector(inputToolbarWillShowMoreFunctions:)]) {
+        [self.delegate inputToolbarWillShowMoreFunctions:self];
+    }
 }
 
 - (void) showTextAction
@@ -158,6 +178,7 @@ CGFloat const kActionHeight = 271;
 - (void) hiddenTextActionExe
 {
     [_textView resignFirstResponder];
+    self.showingBottomFunctions = NO;
 }
 
 - (void) hiddenTextAction
@@ -241,6 +262,7 @@ CGFloat const kActionHeight = 271;
     if (!self) {
         return self;
     }
+    INIT_SELF_SUBVIEW_UIImageView(_backgroundImageView);
     INIT_SELF_SUBVIEW(DZGrowTextView, _textView);
     INIT_SELF_SUBVIEW(UIButton, _emojiButton);
     INIT_SUBVIEW_UIButton(self, _actionButton);
@@ -275,6 +297,15 @@ CGFloat const kActionHeight = 271;
     [_emojiButton addTarget:self action:@selector(showEmojiAction) forControlEvents:UIControlEventTouchUpInside];
     
     [self initMechine];
+    //
+    _backgroundImageView.image = [LoadPodImage(InputToolBar) imageWithAlignmentRectInsets:UIEdgeInsetsMake(5, 0, 0, 0)];
+    //
+    _textView.layer.borderColor = [UIColor hx_colorWithHexString:@"c3c3c4"].CGColor;
+    _textView.layer.borderWidth = 1;
+    _textView.layer.cornerRadius = 5;
+    
+    self.backgroundColor = [UIColor whiteColor];
+    _showingBottomFunctions = NO;
     return self;
 }
 
@@ -290,6 +321,7 @@ CGFloat const kActionHeight = 271;
 - (void) layoutSubviews
 {
     [super layoutSubviews];
+    _backgroundImageView.frame=self.bounds;
     CGFloat space = 10;
     CGRect contentRect = self.bounds;
     contentRect = CGRectCenterSubSize(contentRect, CGSizeMake(10, 10));
@@ -312,6 +344,11 @@ CGFloat const kActionHeight = 271;
     CGRectDivide(inputsRect, &emojiRect, &inputsRect, kButtonSize.width, CGRectMaxXEdge);
     inputsRect = CGRectShrink(inputsRect, space, CGRectMaxXEdge);
     
+    CGRect backgroundRect = inputsRect;
+    backgroundRect.origin.x = 0;
+    backgroundRect.origin.y = 0;
+    backgroundRect.size.height = CGRectGetHeight(inputsRect);
+    backgroundRect.size.width = CGRectGetWidth(self.bounds);
     emojiRect = CGRectCenter(emojiRect, kButtonSize);
     actionRect = CGRectCenter(actionRect, kButtonSize);
     

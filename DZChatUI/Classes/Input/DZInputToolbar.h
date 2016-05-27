@@ -19,6 +19,8 @@
 - (void) inputToolbar:(DZInputToolbar *)toolbar sendImage:(UIImage*)image;
 
 - (void) inputToolbar:(DZInputToolbar *)toolbar sendVoice:(AVAudioRecorder*)recorder;
+
+- (void) inputToolbarWillShowMoreFunctions:(DZInputToolbar*) toolbar;
 @end
 
 @protocol DZInputToolBarUIDelegate <NSObject>
@@ -35,6 +37,7 @@
 @property (nonatomic, strong, readonly) UIButton* emojiButton;
 @property (nonatomic, strong, readonly) UIButton* audioButton;
 @property (nonatomic, strong, readonly) UIButton* actionButton;
-
+@property (nonatomic, assign, readonly) BOOL showingBottomFunctions;
 - (void) endInputing;
+- (void) showTextAction;
 @end

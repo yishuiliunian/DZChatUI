@@ -51,4 +51,6 @@ TODO: Add long description of the pod here.
   s.dependency 'DZAudio'
   s.dependency 'FLAnimatedImage'
   s.dependency 'MJRefresh'
+  s.dependency 'HexColors'
+  s.dependency 'MJRefresh'
 end

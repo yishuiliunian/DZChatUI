@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "DZInputToolbar.h"
 @interface DZInputContentView : UIView
-@property (nonatomic, strong) DZInputToolbar* toolBar;
-@property (nonatomic, strong) UIView* contentView;
+@property (nonatomic, strong, readonly) DZInputToolbar* toolBar;
+@property (nonatomic, strong, readonly) UIView* contentView;
+- (instancetype) initWithToolbar:(DZInputToolbar*)toolbar contentView:(UIView*)contentView;
 @end

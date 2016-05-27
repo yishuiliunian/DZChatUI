@@ -26,6 +26,8 @@
         }
     }];
     [self.tableView setMj_header:header];
+    
+    
 }
 - (void) viewWillAppear:(BOOL)animated
 {

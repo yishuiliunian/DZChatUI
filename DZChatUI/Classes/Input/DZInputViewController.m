@@ -14,6 +14,7 @@
 #import "EKCollectionViewController.h"
 #import "DZAIOTableElement.h"
 #import "DZInputToolbar.h"
+#import "DZInputBeginFooter.h"
 @interface DZInputViewController () <DZInputToolBarUIDelegate>
 {
     DZInputContentView* _inputContentView;
@@ -21,6 +22,7 @@
     UIView* _maskView;
 }
 @property (nonatomic, strong) DZAIOViewController* rootViewController;
+@property (nonatomic, strong) DZInputBeginFooter* beginFooter;
 @end
 
 @implementation DZInputViewController
@@ -42,13 +44,8 @@
     [_rootViewController willMoveToParentViewController:self];
     [self addChildViewController:_rootViewController];
     [_rootViewController didMoveToParentViewController:self];
-    _inputContentView = [DZInputContentView new];
+    _inputContentView = [[DZInputContentView alloc] initWithToolbar:[DZInputToolbar new] contentView:self.rootViewController.view];
     [self.view addSubview:_inputContentView];
-    //
-    _inputContentView.toolBar= [DZInputToolbar new];
-    _inputContentView.contentView = self.rootViewController.view;
-    [_inputContentView addSubview:_inputContentView.toolBar];
-    [_inputContentView addSubview:_rootViewController.view];
     //
     self.contentView = _inputContentView;
     _inputContentView.toolBar.delegate = _rootViewController.tableElement;
