@@ -91,6 +91,7 @@
 }
 
 
+
 - (void) pullDownHanle:(UIPanGestureRecognizer*)pan
 {
     if (pan.state == UIGestureRecognizerStateRecognized) {
@@ -150,4 +151,20 @@
     _swipeDown.enabled = YES;
 }
 
+- (void) wllResponseToKeyboardChanged:(DZKeyboardTransition)transition
+{
+    [self scroolToEnd];
+    if (transition.type == DZKeyboardTransitionShow) {
+        
+    }
+}
+- (void) didResponseToKeyboardChanged:(DZKeyboardTransition)transition
+{
+    [self scroolToEnd];
+}
+
+- (BOOL) transiztionUseAnimation
+{
+    return NO;
+}
 @end
