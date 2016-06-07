@@ -7,38 +7,18 @@
 //
 
 #import "DZInputContentView.h"
+#import "DZAlphaView.h"
 
-@interface DZAlphaView : UIView
 
-@end
 
-@implementation DZAlphaView
 
-- (void) touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [super touchesBegan:touches withEvent:event];
-}
 
-- (void) touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [super touchesEnded:touches withEvent:event];
-}
 
-- (void) touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [super touchesMoved:touches withEvent:event];
-}
-
-- (void) touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [super touchesCancelled:touches withEvent:event];
-}
-
-@end
 
 @interface DZInputContentView () <UIGestureRecognizerDelegate>
 {
     DZAlphaView* _maskView;
+
 }
 @end
 @implementation DZInputContentView
@@ -100,11 +80,7 @@
 
 - (void) handleAdjustFrame
 {
-    [self layoutSubviews];
     
-    if (ABS(self.adjustHeight - CGRectGetHeight(self.bounds))  < 1) {
-        return;
-    }
         [UIView animateWithDuration:0.23 animations:^{
             [self layoutSubviews];
         } completion:^(BOOL finished) {
@@ -112,4 +88,6 @@
         }];
 
 }
+
+
 @end

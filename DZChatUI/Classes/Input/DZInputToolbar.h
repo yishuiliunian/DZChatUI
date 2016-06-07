@@ -13,21 +13,17 @@
 @class DZInputToolbar;
 @class AVAudioRecorder;
 @protocol DZInputToolbarDelegate 
-
 - (void) inputToolbar:(DZInputToolbar*)toolbar sendText:(NSString*)text;
-
 - (void) inputToolbar:(DZInputToolbar *)toolbar sendImage:(UIImage*)image;
-
 - (void) inputToolbar:(DZInputToolbar *)toolbar sendVoice:(AVAudioRecorder*)recorder;
-
 - (void) inputToolbarWillShowMoreFunctions:(DZInputToolbar*) toolbar;
 @end
 
 @protocol DZInputToolBarUIDelegate <NSObject>
-
-
-- (void) inputToolbarBeginShowAddtions:(DZInputToolbar *)toolbar;
-- (void) inputToolbarEndShowAddtions:(DZInputToolbar*)toolbar;
+- (void) inputToolbarShowEmoji:(DZInputToolbar*)toolbar;
+- (void) inputToolbarHideEmoji:(DZInputToolbar*)toolbar;
+- (void) inputToolbarShowActions:(DZInputToolbar*)toolbar;
+- (void) inputToolbarHideActions:(DZInputToolbar*)toolbar;
 @end
 
 @interface DZInputToolbar : UIView
@@ -38,6 +34,7 @@
 @property (nonatomic, strong, readonly) UIButton* audioButton;
 @property (nonatomic, strong, readonly) UIButton* actionButton;
 @property (nonatomic, assign, readonly) BOOL showingBottomFunctions;
+@property (nonatomic, strong, readonly) UILabel* voiceInputLabel;
 - (void) endInputing;
 - (void) showTextAction;
 @end

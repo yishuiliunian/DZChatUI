@@ -10,12 +10,11 @@
 #import <ElementKit/ElementKit.h>
 #import "DZInputContentView.h"
 @class DZAIOViewController;
-@interface DZInputViewController : DZKeyboardAdjustViewController
+@interface DZInputViewController : UIViewController
 {
     @protected
     EKElement* _element;
 }
-@property (nonatomic, strong, readonly)     DZInputContentView* inputContentView;
 - (instancetype) initWithElement:(EKElement*)ele contentViewController:(DZAIOViewController*)viewController;
 @end
 

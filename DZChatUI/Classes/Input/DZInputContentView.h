@@ -11,5 +11,6 @@
 @interface DZInputContentView : UIView
 @property (nonatomic, strong, readonly) DZInputToolbar* toolBar;
 @property (nonatomic, strong, readonly) UIView* contentView;
+@property (nonatomic, strong, readonly) UIView* functionView;
 - (instancetype) initWithToolbar:(DZInputToolbar*)toolbar contentView:(UIView*)contentView;
 @end

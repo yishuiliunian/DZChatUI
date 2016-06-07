@@ -10,15 +10,14 @@
 #import "DZProgrameDefines.h"
 #import "DZImageCache.h"
 #import "DZGeometryTools.h"
-#import "DZEmojiActionElement.h"
-#import "DZInputActionViewController.h"
-#import "DZEmojiItemElement.h"
-#import "DZAIOActionElement.h"
-#import "DZAIOImageActionElement.h"
-#import <TransitionKit/TransitionKit.h>
 #import "DZVoiceInputView.h"
 #import <DZAudio/DZAudio.h>
+#import <TransitionKit/TransitionKit.h>
 #import "HexColors.h"
+#import "DZInputActionViewController.h"
+#import "DZEmojiActionElement.h"
+#import "DZAIOActionElement.h"
+
 #define LoadPodImage(name)   [UIImage imageNamed:@"DZChatUI.bundle/"#name inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil]
 
 static NSString* const kEventText = @"intext";
@@ -28,29 +27,6 @@ static NSString* const kEventEmoji = @"inemoji";
 static NSString* const kEventNone = @"innone";
 
 
-CGFloat const kSTMinHeight = 44;
-CGSize const kButtonSize = {35, 35};
-CGFloat const kActionHeight = 271;
-
-@interface DZInputToolbar () <UITextViewDelegate, DZInputActionElementDelegate, K12AudioRecorderDelegate>
-{
-    DZInputActionViewController* _emojiViewController;
-    DZInputActionViewController* _actionViewController;
-    BOOL _actionShowed;
-    TKStateMachine* _stateMachine;
-    
-    UILabel* _voiceInputLabel;
-    DZVoiceInputView* _voiceInputView;
-    K12AudioRecorder* _audioRecorder;
-    
-    CFTimeInterval _recordBeginTime;
-}
-@property (nonatomic, strong) UIImageView* backgroundImageView;
-@property (nonatomic, assign) BOOL showingBottomFunctions;
-@end
-
-
-@implementation DZInputToolbar
 #define ADDSelector(btn, sel, rmsel) \
 [btn removeTarget:self action:rmsel forControlEvents:UIControlEventTouchUpInside]; \
 [btn addTarget:self action:sel forControlEvents:UIControlEventTouchUpInside];
@@ -59,12 +35,36 @@ CGFloat const kActionHeight = 271;
 [btn setImage:LoadPodImage(normal) forState:UIControlStateNormal]; \
 [btn setImage:LoadPodImage(hl) forState:UIControlStateHighlighted];
 
+
+CGFloat const kSTMinHeight = 44;
+CGSize const kButtonSize = {35, 35};
+CGFloat const kActionHeight = 271;
+
+@interface DZInputToolbar () <UITextViewDelegate,  K12AudioRecorderDelegate>
+{
+    DZVoiceInputView* _voiceInputView;
+    K12AudioRecorder* _audioRecorder;
+    CFTimeInterval _recordBeginTime;
+    TKStateMachine* _stateMachine;
+    DZInputActionViewController* _emojiViewController;
+    DZInputActionViewController* _actionViewController;
+}
+@property (nonatomic, strong, readonly) TKStateMachine* stateMachine;
+@property (nonatomic, strong) UIImageView* backgroundImageView;
+@property (nonatomic, assign) BOOL showingBottomFunctions;
+@end
+
+
+@implementation DZInputToolbar
+
+
+
+
 #pragma Doing thing when event occurs
 - (void) showAudioExe
 {
     ADDSelector(_audioButton, @selector(hidenAutioAction), @selector(showAudioAction));
     SetButtonImages(_audioButton, ToolViewKeyboard, ToolViewKeyboardHL);
-    _actionShowed = NO;
     _voiceInputLabel.hidden = NO;
     _textView.hidden = YES;
     [self bringSubviewToFront:_voiceInputLabel];
@@ -72,13 +72,8 @@ CGFloat const kActionHeight = 271;
 }
 - (void) showAudioAction
 {
-    NSError* error;
-    [_stateMachine fireEvent:kEventAudio userInfo:nil error:&error];
-    if (error) {
-        NSLog(@"%@",error);
-    }
+    [_stateMachine fireEvent:kEventAudio userInfo:nil error:nil];
 }
-
 
 - (void) hiddenAudioExe
 {
@@ -95,17 +90,16 @@ CGFloat const kActionHeight = 271;
 
 - (void) showMoreExe
 {
-    ADDSelector(_actionButton, @selector(hidenMoreAction), @selector(showMoreAction));
-    SetButtonImages(_actionButton, ToolViewKeyboard, ToolViewKeyboardHL);
-    _actionShowed = YES;
-    [self addSubview:_actionViewController.view];
-    [self handleAdjustFrame];
-    self.showingBottomFunctions = YES;
-    [self sendDidShowMoreFunctionsDelegate];
 
+    
 }
 - (void) showMoreAction
 {
+    ADDSelector(_actionButton, @selector(hidenMoreAction), @selector(showMoreAction));
+    SetButtonImages(_actionButton, ToolViewKeyboard, ToolViewKeyboardHL);
+    if ([self.uiDelegate respondsToSelector:@selector(inputToolbarShowActions:)]) {
+        [self.uiDelegate inputToolbarShowActions:self];
+    }
     [_stateMachine fireEvent:kEventMore userInfo:nil error:nil];
 }
 
@@ -113,46 +107,42 @@ CGFloat const kActionHeight = 271;
 {
     ADDSelector(_actionButton, @selector(showMoreAction), @selector(hiddenMoreExe));
     SetButtonImages(_actionButton, ToolViewInputVoice, ToolViewInputVoiceHL);
-    _actionShowed = NO;
-    [self handleAdjustFrame];
-    self.showingBottomFunctions = NO;
+    if ([self.uiDelegate respondsToSelector:@selector(inputToolbarHideActions:)]) {
+        [self.uiDelegate inputToolbarHideActions:self];
+    }
 }
 
 - (void) hidenMoreAction
 {
-
     [_stateMachine fireEvent:kEventText userInfo:nil error:nil];
-
 }
 
 - (void) showEmojiExe
 {
-    ADDSelector(_emojiButton, @selector(hidenEmojiAction), @selector(showEmojiAction));
-    SetButtonImages(_emojiButton, ToolViewKeyboard, ToolViewKeyboardHL);
-    _actionShowed = YES;
-    [self addSubview:_emojiViewController.view];
-    [self handleAdjustFrame];
-    self.showingBottomFunctions = YES;
-    [self sendDidShowMoreFunctionsDelegate];
 
+    
 }
 - (void) showEmojiAction
 {
+    ADDSelector(_emojiButton, @selector(hidenEmojiAction), @selector(showEmojiAction));
+    SetButtonImages(_emojiButton, ToolViewKeyboard, ToolViewKeyboardHL);
+    if ([self.uiDelegate respondsToSelector:@selector(inputToolbarShowEmoji:)]) {
+        [self.uiDelegate inputToolbarShowEmoji:self];
+    }
     [_stateMachine fireEvent:kEventEmoji userInfo:nil error:nil];
+    
 }
 
 - (void) hiddenEmojiExe
 {
     ADDSelector(_emojiButton, @selector(showEmojiAction), @selector(hiddenEmojiExe));
     SetButtonImages(_emojiButton, ToolViewInputVoice, ToolViewInputVoiceHL);
-    _actionShowed = NO;
-    [self handleAdjustFrame];
-    self.showingBottomFunctions = NO;
-    
+    if ([self.uiDelegate respondsToSelector:@selector(inputToolbarHideEmoji:)]) {
+        [self.uiDelegate inputToolbarHideEmoji:self];
+    }
 }
 - (void) hidenEmojiAction
 {
- 
     [_stateMachine fireEvent:kEventText userInfo:nil error:nil];
 }
 
@@ -160,14 +150,6 @@ CGFloat const kActionHeight = 271;
 {
     [_textView becomeFirstResponder];
     self.showingBottomFunctions = YES;
-    [self sendDidShowMoreFunctionsDelegate];
-}
-
-- (void) sendDidShowMoreFunctionsDelegate
-{
-    if ([self.delegate respondsToSelector:@selector(inputToolbarWillShowMoreFunctions:)]) {
-        [self.delegate inputToolbarWillShowMoreFunctions:self];
-    }
 }
 
 - (void) showTextAction
@@ -256,6 +238,7 @@ CGFloat const kActionHeight = 271;
 }
 
 
+
 - (instancetype) initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -279,15 +262,7 @@ CGFloat const kActionHeight = 271;
     //
     _textView.enablesReturnKeyAutomatically = YES;
     _textView.backgroundColor = [UIColor whiteColor];
-    DZEmojiActionElement* emojiEle = [DZEmojiActionElement new];
-    emojiEle.delegate = self;
-    _emojiViewController = [[DZInputActionViewController alloc] initWithElement:emojiEle];
-    _actionShowed = NO;
     self.backgroundColor = [UIColor lightTextColor];
-    
-    DZAIOActionElement* actionsEle = [DZAIOActionElement new];
-    actionsEle.delegate = self;
-    _actionViewController = [[DZInputActionViewController alloc] initWithElement:actionsEle];
     
     SetButtonImages(_audioButton, ToolViewInputVoice, ToolViewInputVoiceHL);
     [_audioButton addTarget:self action:@selector(showAudioAction) forControlEvents:UIControlEventTouchUpInside];
@@ -312,9 +287,6 @@ CGFloat const kActionHeight = 271;
 - (void) handleAdjustFrame
 {
     CGFloat height = MAX(self.textView.adjustHeight, 44) + 10;
-    if (_actionShowed) {
-        height+=kActionHeight;
-    }
     self.adjustHeight = height;
 }
 
@@ -355,8 +327,6 @@ CGFloat const kActionHeight = 271;
     _emojiButton.frame  = emojiRect;
     _actionButton.frame = actionRect;
     _audioButton.frame = keyboardRect;
-    _emojiViewController.view.frame = contentRect;
-    _actionViewController.view.frame = contentRect;
     
     if ([_stateMachine.currentState.name isEqualToString:@"audio"]) {
         _voiceInputLabel.frame = inputsRect;
@@ -408,36 +378,12 @@ CGFloat const kActionHeight = 271;
 }
 
 
-- (void) actionElement:(DZInputActionElement *)element didSelectAction:(EKElement *)itemElement
-{
-    if ([itemElement isKindOfClass:[DZEmojiItemElement class]] ) {
-        DZEmojiItemElement* emojiElement = (DZEmojiItemElement*)itemElement;
-        NSString* text = _textView.text;
-        text = text?text:@"";
-        text = [text stringByAppendingString:emojiElement.emoji];
-        _textView.text=text;
-    } else if ([itemElement isKindOfClass:[DZAIOImageActionElement class]]) {
-        DZAIOImageActionElement* item =(DZAIOImageActionElement*)itemElement;
-        if ([self.delegate respondsToSelector:@selector(inputToolbar:sendImage:)]) {
-            [self.delegate inputToolbar:self sendImage:item.image];
-        }
-        _actionShowed = NO;
-        [self handleAdjustFrame];
-    }
-}
-
 - (void) beginShowAddition
 {
-    if ([self.uiDelegate respondsToSelector:@selector(inputToolbarBeginShowAddtions:)]) {
-        [self.uiDelegate inputToolbarBeginShowAddtions:self];
-    }
 }
 
 - (void) endShowAdditon
 {
-    if ([self.uiDelegate respondsToSelector:@selector(inputToolbarEndShowAddtions:)]) {
-        [self.uiDelegate inputToolbarEndShowAddtions:self];
-    }
 }
 
 - (void) endInputing
@@ -448,9 +394,7 @@ CGFloat const kActionHeight = 271;
 - (void) touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesBegan:touches withEvent:event];
-  
     [self startRecord];
- 
 }
 
 - (void) touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
