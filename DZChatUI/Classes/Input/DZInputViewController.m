@@ -7,26 +7,43 @@
 //
 
 #import "DZInputViewController.h"
-#import "DZInputContentView.h"
 #import "DZAIOViewController.h"
 #import "DZEmojiItemElement.h"
 #import "DZEmojiActionElement.h"
 #import "EKCollectionViewController.h"
 #import "DZAIOTableElement.h"
 #import "DZInputToolbar.h"
-#import "DZInputBeginFooter.h"
 #import <DZKeyboardManager/DZKeyboardManager.h>
 #import "DZEmojiActionElement.h"
 #import "DZInputActionViewController.h"
 #import "DZEmojiItemElement.h"
 #import "DZAIOActionElement.h"
 #import "DZAIOImageActionElement.h"
-
+#import <TransitionKit/TransitionKit.h>
 
 static CGFloat kDZAdditionHeight = 271;
 
 
-@interface DZInputViewController () <DZInputToolBarUIDelegate, DZKeyboardChangedProtocol>
+static NSString* const kStateText = @"text";
+static NSString* const kStateAction = @"action";
+static NSString* const kStateVoice = @"voice";
+static NSString* const kStateEmoji = @"emoji";
+static NSString* const kStateNone = @"none";
+
+static NSString* const kEventText = @"intext";
+static NSString* const kEventMore = @"inmore";
+static NSString* const kEventAudio = @"inaudio";
+static NSString* const kEventEmoji = @"inemoji";
+static NSString* const kEventNone = @"innone";
+
+
+#define ADDSelector(btn,addsel, rmsel) \
+[btn removeTarget:self action:rmsel forControlEvents:UIControlEventTouchUpInside]; \
+[btn addTarget:self action:addsel forControlEvents:UIControlEventTouchUpInside];
+
+
+
+@interface DZInputViewController () <DZKeyboardChangedProtocol, UITextViewDelegate>
 {
     UISwipeGestureRecognizer* _swipeDown;
     UIView* _maskView;
@@ -42,13 +59,152 @@ static CGFloat kDZAdditionHeight = 271;
     DZInputActionViewController* _emojiViewController;
     DZInputActionViewController* _actionViewController;
     BOOL _isShowAddtions;
+    //
+    TKStateMachine* _stateMachine;
 }
 @property (nonatomic, strong) DZAIOViewController* rootViewController;
-@property (nonatomic, strong) DZInputBeginFooter* beginFooter;
+@property (nonatomic, strong) DZInputToolbar* toolbar;
+@property (nonatomic, strong) DZInputActionViewController* emojiViewController;
+@property (nonatomic, strong) DZInputActionViewController* actionViewController;
+@property (nonatomic, assign) BOOL isShowAddtions;
 @end
 
-@implementation DZInputViewController
 
+@implementation DZInputViewController
+#pragma Doing thing when event occurs
+
+
+- (void) sendTextEvent
+{
+    [_stateMachine fireEvent:kEventText userInfo:nil error:nil];
+
+}
+
+- (void) sendVoiceEvent
+{
+    [_stateMachine fireEvent:kEventAudio userInfo:nil error:nil];
+ 
+}
+
+- (void) sendActionEvent
+{
+    [_stateMachine fireEvent:kEventMore userInfo:nil error:nil];
+ 
+}
+
+- (void) sendEmojiEvent
+{
+    [_stateMachine fireEvent:kEventEmoji userInfo:nil error:nil];
+ 
+}
+
+- (void) voiceButtonToggleVoice
+{
+    ADDSelector(_toolbar.audioButton, @selector(sendTextEvent),  @selector(sendVoiceEvent));
+}
+
+- (void) voiceButtonToggleKeyboard
+{
+    ADDSelector(_toolbar.audioButton, @selector(sendVoiceEvent), @selector(sendTextEvent));
+}
+
+- (void) actionButtonToggleAction
+{
+    ADDSelector(_toolbar.actionButton, @selector(sendTextEvent), @selector(sendActionEvent));
+}
+
+- (void) actionButtonToggleKeyboard
+{
+    ADDSelector(_toolbar.actionButton, @selector(sendActionEvent), @selector(sendTextEvent));
+}
+
+- (void) emojiButtonToggleEmoji
+{
+    ADDSelector(_toolbar.emojiButton, @selector(sendTextEvent), @selector(sendEmojiEvent));
+}
+
+- (void) emojiButtonToggleKeyboard
+{
+    ADDSelector(_toolbar.emojiButton, @selector(sendEmojiEvent), @selector(sendTextEvent));
+}
+
+- (void) setupToolbarButton
+{
+    [self voiceButtonToggleKeyboard];
+    [self emojiButtonToggleKeyboard];
+    [self actionButtonToggleKeyboard];
+}
+- (void) setupMechine
+{
+    __weak typeof(self) wSelf = self;
+    _stateMachine = [TKStateMachine new];
+    TKState* textState   = [TKState stateWithName:kStateText];
+    TKState* voiceState  = [TKState stateWithName:kStateVoice];
+    TKState* actionState = [TKState stateWithName:kStateAction];
+    TKState* emojiState  = [TKState stateWithName:kStateEmoji];
+    TKState* noneState   = [TKState stateWithName:kStateNone];
+    
+    
+    [voiceState setWillEnterStateBlock:^(TKState *state, TKTransition *transition) {
+        [wSelf.toolbar audioButtonShowNormal:NO];
+        [wSelf voiceButtonToggleVoice];
+        [wSelf layoutWithAddtionHeight:0];
+    }];
+    [voiceState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
+        [wSelf.toolbar audioButtonShowNormal:YES];
+        [wSelf voiceButtonToggleKeyboard];
+    }];
+    
+    [emojiState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
+        [wSelf.toolbar emojiButtonShowNormal:NO];
+        [wSelf emojiButtonToggleEmoji];
+        [wSelf layoutWithAddtionHeight:kDZAdditionHeight];
+        [wSelf.view bringSubviewToFront:wSelf.emojiViewController.view];
+        wSelf.isShowAddtions = YES;
+    }];
+    [emojiState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
+        [wSelf.toolbar emojiButtonShowNormal:YES];
+        [wSelf emojiButtonToggleKeyboard];
+        wSelf.isShowAddtions  = NO;
+    }];
+    
+    
+    [actionState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
+        [wSelf.toolbar actionButtonShowNormal:NO];
+        [wSelf actionButtonToggleAction];
+        [wSelf layoutWithAddtionHeight:kDZAdditionHeight];
+        [wSelf.view bringSubviewToFront:wSelf.actionViewController.view];
+        wSelf.isShowAddtions = YES;
+    }];
+    
+    [actionState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
+        [wSelf.toolbar actionButtonShowNormal:YES];
+        [wSelf actionButtonToggleKeyboard];
+        wSelf.isShowAddtions = NO;
+    }];
+    
+    
+    [textState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
+        [wSelf.toolbar.textInputView.textView becomeFirstResponder];
+    }];
+    
+    [textState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
+        if ([transition.destinationState.name isEqualToString:kStateEmoji] ||
+            [transition.destinationState.name isEqualToString:kStateAction]) {
+            wSelf.isShowAddtions = YES;
+        }
+        [wSelf.toolbar.textInputView.textView resignFirstResponder];
+    }];
+    [_stateMachine addStates:@[textState, noneState, emojiState, voiceState, actionState]];
+    
+    TKEvent* textEvent = [TKEvent eventWithName:kEventText transitioningFromStates:@[noneState, voiceState, actionState, emojiState] toState:textState];
+    TKEvent* voiceEvent = [TKEvent eventWithName:kEventAudio transitioningFromStates:@[noneState, textState, actionState, emojiState] toState:voiceState];
+    TKEvent* actionEvent = [TKEvent eventWithName:kEventMore transitioningFromStates:@[noneState, textState, voiceState, emojiState] toState:actionState];
+    TKEvent* emojiEvent = [TKEvent eventWithName:kEventEmoji transitioningFromStates:@[noneState, textState, voiceState, actionState] toState:emojiState];
+    TKEvent* noneEvent = [TKEvent eventWithName:kEventNone transitioningFromStates:@[emojiState, textState, voiceState, actionState] toState:noneState];
+    [_stateMachine addEvents:@[textEvent, voiceEvent, actionEvent, emojiEvent, noneEvent]];
+    [_stateMachine setInitialState:noneState];
+}
 - (instancetype) initWithElement:(EKElement *)ele contentViewController:(DZAIOViewController *)viewController
 {
     self = [self initWithNibName:nil bundle:nil];
@@ -59,6 +215,7 @@ static CGFloat kDZAdditionHeight = 271;
     _element = ele;
     _isFirstLayout = YES;
     _isShowAddtions = NO;
+
     return self;
 }
 
@@ -79,8 +236,6 @@ static CGFloat kDZAdditionHeight = 271;
     //
     _contentView = _rootViewController.view;
     [self.view addSubview:_contentView];
-    _toolbar.delegate = _rootViewController.tableElement;
-    _toolbar.uiDelegate = self;
     //
     
     DZEmojiActionElement* emojiEle = [DZEmojiActionElement new];
@@ -95,6 +250,10 @@ static CGFloat kDZAdditionHeight = 271;
 }
 
 
+- (void) setupTextView
+{
+    _toolbar.textInputView.textView.delegate = self;
+}
 
 - (void) appenChildVC:(UIViewController*)vc
 {
@@ -110,6 +269,9 @@ static CGFloat kDZAdditionHeight = 271;
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self loadContentView];
+    [self setupToolbarButton];
+    [self setupMechine];
+    [self setupTextView];
     self.edgesForExtendedLayout  = UIRectEdgeNone;
     _swipeDown.enabled = NO;
 }
@@ -170,77 +332,6 @@ static CGFloat kDZAdditionHeight = 271;
     [DZKeyboardShareManager removeObserver:self];
 }
 
-- (void) wllResponseToKeyboardChanged:(DZKeyboardTransition)transition
-{
-    [self scroolToEnd];
-    if (transition.type == DZKeyboardTransitionShow) {
-        
-    }
-}
-- (void) didResponseToKeyboardChanged:(DZKeyboardTransition)transition
-{
-    [self scroolToEnd];
-}
-
-- (BOOL) transiztionUseAnimation
-{
-    return NO;
-}
-//- (void) actionElement:(DZInputActionElement *)element didSelectAction:(EKElement *)itemElement
-//{
-//    if ([itemElement isKindOfClass:[DZEmojiItemElement class]] ) {
-//        DZEmojiItemElement* emojiElement = (DZEmojiItemElement*)itemElement;
-//        NSString* text = _textView.text;
-//        text = text?text:@"";
-//        text = [text stringByAppendingString:emojiElement.emoji];
-//        _textView.text=text;
-//    } else if ([itemElement isKindOfClass:[DZAIOImageActionElement class]]) {
-//        DZAIOImageActionElement* item =(DZAIOImageActionElement*)itemElement;
-//        if ([self.delegate respondsToSelector:@selector(inputToolbar:sendImage:)]) {
-//            [self.delegate inputToolbar:self sendImage:item.image];
-//        }
-//        _actionShowed = NO;
-//        [self handleAdjustFrame];
-//    }
-//}
-
-#
-- (void) inputToolbarHideEmoji:(DZInputToolbar *)toolbar
-{
-    _isShowAddtions = NO;
-    [self hideAddtions];
-}
-
-- (void) showAddtions
-{
-    [self layoutWithAddtionHeight:kDZAdditionHeight];
-}
-
-- (void) hideAddtions
-{
-    [self layoutWithAddtionHeight:0];
-}
-
-- (void) inputToolbarShowEmoji:(DZInputToolbar *)toolbar
-{
-    
-    _isShowAddtions = YES;
-    [self.view bringSubviewToFront:_emojiViewController.view];
-    [self showAddtions];
-}
-
-- (void) inputToolbarHideActions:(DZInputToolbar *)toolbar
-{
-    _isShowAddtions = NO;
-    [self hideAddtions];
-}
-
-- (void) inputToolbarShowActions:(DZInputToolbar *)toolbar
-{
-    _isShowAddtions = YES;
-    [self layoutWithAddtionHeight:kDZAdditionHeight];
-    [self.view bringSubviewToFront:_actionViewController.view];
-}
 
 - (void) layoutWithAddtionHeight:(CGFloat)height
 {
@@ -259,7 +350,6 @@ static CGFloat kDZAdditionHeight = 271;
 
 - (void) keyboardChanged:(DZKeyboardTransition)transition
 {
-    [self wllResponseToKeyboardChanged:transition];
     kDZAdditionHeight = CGRectGetHeight(transition.endFrame);
     void(^AnimationBlock)(void) = ^(void) {
         if (transition.type == DZKeyboardTransitionShow) {
@@ -271,13 +361,17 @@ static CGFloat kDZAdditionHeight = 271;
         }
     };
     void(^FinishBlock)(BOOL) = ^(BOOL finish) {
-        [self didResponseToKeyboardChanged:transition];
     };
-    if ([self transiztionUseAnimation]) {
-        [UIView animateWithDuration:transition.animationDuration animations:AnimationBlock completion:FinishBlock];
-    } else {
-        AnimationBlock();
-        FinishBlock(YES);
-    }
+    [UIView animateWithDuration:transition.animationDuration animations:AnimationBlock completion:FinishBlock];
+}
+
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView
+{
+    [self sendTextEvent];
+    return YES;
+}
+- (BOOL) textViewShouldEndEditing:(UITextView *)textView
+{
+    return YES;
 }
 @end

@@ -8,7 +8,6 @@
 
 #import <DZKeyboardAdjust/DZKeyboardAdjust.h>
 #import <ElementKit/ElementKit.h>
-#import "DZInputContentView.h"
 @class DZAIOViewController;
 @interface DZInputViewController : UIViewController
 {

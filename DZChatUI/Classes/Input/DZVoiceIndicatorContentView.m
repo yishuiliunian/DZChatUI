@@ -6,11 +6,11 @@
 //
 //
 
-#import "DZVoiceInputContentView.h"
+#import "DZVoiceIndicatorContentView.h"
 #import "DZGeometryTools.h"
 #import "DZProgrameDefines.h"
 #import <DZAdjustFrame/DZAdjustFrame.h>
-@implementation DZVoiceInputContentView
+@implementation DZVoiceIndicatorContentView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {

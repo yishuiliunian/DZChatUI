@@ -8,7 +8,7 @@
 
 #import <ElementKit/ElementKit.h>
 #import "DZInputToolbar.h"
-@interface DZAIOTableElement : EKAdjustTableElement <DZInputToolbarDelegate>
+@interface DZAIOTableElement : EKAdjustTableElement
 
 - (void) handleLoadOldMessage;
 - (void) scrollToEnd;

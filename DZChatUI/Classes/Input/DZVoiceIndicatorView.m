@@ -6,11 +6,12 @@
 //
 //
 
-#import "DZVoiceInputView.h"
+#import "DZVoiceIndicatorView.h"
 #import "DZGeometryTools.h"
 #import "DZProgrameDefines.h"
 #import <DZAdjustFrame/DZAdjustFrame.h>
-@implementation DZVoiceInputView
+#import "DZVoiceIndicatorContentView.h"
+@implementation DZVoiceIndicatorView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -18,7 +19,7 @@
     if (!self) {
         return self;
     }
-    INIT_SELF_SUBVIEW(DZVoiceInputContentView, _contentView);
+    INIT_SELF_SUBVIEW(DZVoiceIndicatorContentView, _contentView);
     return self;
 }
 
