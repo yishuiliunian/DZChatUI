@@ -9,6 +9,8 @@
 #import "DZAIOActionElement.h"
 #import "DZAIOActionItemElement.h"
 #import "DZAIOImageActionElement.h"
+#import "DZChatTools.h"
+
 #define LoadPodImage(name)   [UIImage imageNamed:@"DZChatUI.bundle/"#name inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil]
 
 
@@ -22,8 +24,8 @@
 
 - (void) reloadData
 {
-    _imageItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(ToolViewKeyboard) title:@"照片"];
-    _camertaItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(ToolViewKeyboard) title:@"相机"];
+    _imageItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(actiion_image) title:@"照片"];
+    _camertaItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(actiion_camera) title:@"相机"];
     _camertaItem.sourceType = UIImagePickerControllerSourceTypeCamera;
     [_dataController clean];
     [_dataController addObject:_imageItem];
@@ -41,7 +43,7 @@
 
 - (CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(100, 100);
+    return CGSizeMake(80, 100);
 }
 
 

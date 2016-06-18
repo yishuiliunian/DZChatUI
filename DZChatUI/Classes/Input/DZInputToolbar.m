@@ -17,9 +17,9 @@
 #import "DZInputActionViewController.h"
 #import "DZEmojiActionElement.h"
 #import "DZAIOActionElement.h"
+#import "DZChatTools.h"
 
 
-#define LoadPodImage(name)   [UIImage imageNamed:@"DZChatUI.bundle/"#name inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil]
 #define SetButtonImages(btn ,normal, hl) \
 [btn setImage:LoadPodImage(normal) forState:UIControlStateNormal]; \
 [btn setImage:LoadPodImage(hl) forState:UIControlStateHighlighted];
