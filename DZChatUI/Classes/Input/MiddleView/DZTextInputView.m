@@ -18,7 +18,7 @@
     if (!self) {
         return self;
     }
-    INIT_SELF_SUBVIEW(DZGrowTextView, _textView);
+    INIT_SELF_SUBVIEW(DZAlignTextView, _textView);
     _textView.delegate = self;
     _textView.backgroundColor = [UIColor whiteColor];
     _textView.textColor = [UIColor blackColor];
@@ -30,13 +30,17 @@
     _textView.layer.borderColor = [UIColor hx_colorWithHexString:@"c3c3c4"].CGColor;
     _textView.layer.borderWidth = 1;
     _textView.layer.cornerRadius = 5;
+    _textView.font = [UIFont systemFontOfSize:15];
+    _textView.textAlignment = NSTextAlignmentLeft;
+    _textView.scrollEnabled = NO;
+    _textView.returnKeyType = UIReturnKeySend;
     return self;
 }
 
 - (CGFloat) aimHeight
 {
-    CGSize size = [_textView.text sizeWithFont:_textView.font constrainedToSize:CGSizeMake(CGRectGetWidth(self.bounds), CGFLOAT_MAX)];
-    return  MAX([super aimHeight], size.height);
+    CGSize size = [_textView.text sizeWithFont:_textView.font constrainedToSize:CGSizeMake(CGRectGetWidth(self.bounds) - 10, CGFLOAT_MAX)];
+    return  MAX(35, size.height + 20);
 }
 - (void) layoutSubviews
 {

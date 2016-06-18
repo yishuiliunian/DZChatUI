@@ -148,14 +148,22 @@ CGFloat const kActionHeight = 271;
     emojiRect = CGRectCenter(emojiRect, kButtonSize);
     actionRect = CGRectCenter(actionRect, kButtonSize);
     
-    _emojiButton.frame  = emojiRect;
-    _actionButton.frame = actionRect;
-    _audioButton.frame = voiceRect;
+    
+    CGRect(^AlignToBottom)(CGRect) = ^(CGRect rect) {
+        rect.origin.y  = CGRectGetHeight(self.bounds) - 6.5- CGRectGetHeight(rect);
+        return rect;
+    };
+    _emojiButton.frame  = AlignToBottom(emojiRect);
+    _actionButton.frame = AlignToBottom(actionRect);
+    _audioButton.frame = AlignToBottom(voiceRect);
     _inputMiddleView.frame = inputsRect;
-
 }
 
 
+- (CGFloat) adjustHeight
+{
+    return _inputMiddleView.aimHeight + 10;
+}
 
 
 

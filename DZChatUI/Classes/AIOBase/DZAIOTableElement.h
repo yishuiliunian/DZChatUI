@@ -9,7 +9,8 @@
 #import <ElementKit/ElementKit.h>
 #import "DZInputToolbar.h"
 @interface DZAIOTableElement : EKAdjustTableElement
-
 - (void) handleLoadOldMessage;
-- (void) scrollToEnd;
+- (void) inputImage:(UIImage*)image;
+- (void) inputVoice:(NSURL*)url;
+- (void) inputText:(NSString*)text;
 @end

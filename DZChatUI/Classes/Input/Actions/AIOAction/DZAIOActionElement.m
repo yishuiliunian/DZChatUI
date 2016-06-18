@@ -14,8 +14,8 @@
 
 @interface DZAIOActionElement () <DZAIOImageActionEvents>
 {
-    DZAIOActionItemElement* _imageItem;
-    DZAIOActionItemElement* _camertaItem;
+    DZAIOImageActionElement* _imageItem;
+    DZAIOImageActionElement* _camertaItem;
 }
 @end
 @implementation DZAIOActionElement
@@ -23,12 +23,14 @@
 - (void) reloadData
 {
     _imageItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(ToolViewKeyboard) title:@"照片"];
-    _camertaItem = [[DZAIOActionItemElement alloc] initWithTitleImage:LoadPodImage(ToolViewKeyboard) title:@"相机"];
+    _camertaItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(ToolViewKeyboard) title:@"相机"];
+    _camertaItem.sourceType = UIImagePickerControllerSourceTypeCamera;
     [_dataController clean];
     [_dataController addObject:_imageItem];
     [_dataController addObject:_camertaItem];
     [super reloadData];
 }
+
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     

@@ -34,4 +34,5 @@
     [super viewWillAppear:animated];
     self.navigationController.interactivePopGestureRecognizer.delaysTouchesBegan = NO;
 }
+
 @end

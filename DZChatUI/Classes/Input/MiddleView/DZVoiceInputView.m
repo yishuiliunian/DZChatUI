@@ -12,7 +12,7 @@
 #import "DZVoiceIndicatorContentView.h"
 #import <DZAudio/DZAudio.h>
 
-@interface DZVoiceInputView ()
+@interface DZVoiceInputView () <K12AudioRecorderDelegate>
 {
     UILabel* _textLabel;
     DZVoiceIndicatorView* _voiceIndicatorView;
@@ -98,4 +98,15 @@
     [self stopRecord];
 }
 
+- (void) k12AudioRecorderEncodeErrorDidOccur:(AVAudioRecorder *)recorder error:(NSError *)error
+{
+    
+}
+
+- (void) k12AudioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag
+{
+    if ([self.delegate respondsToSelector:@selector(voiceInputView:didFinishRecord:)]) {
+        [self.delegate voiceInputView:self didFinishRecord:_audioRecorder];
+    }
+}
 @end

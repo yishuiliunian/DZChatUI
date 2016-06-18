@@ -20,6 +20,10 @@
 #import "DZAIOActionElement.h"
 #import "DZAIOImageActionElement.h"
 #import <TransitionKit/TransitionKit.h>
+#import <DZLogger/DZLogger.h>
+#import <DZAudio/DZAudio.h>
+#import "DZAlphaView.h"
+#import "DZAIOImageActionElement.h"
 
 static CGFloat kDZAdditionHeight = 271;
 
@@ -43,10 +47,9 @@ static NSString* const kEventNone = @"innone";
 
 
 
-@interface DZInputViewController () <DZKeyboardChangedProtocol, UITextViewDelegate>
+@interface DZInputViewController () <DZKeyboardChangedProtocol, UITextViewDelegate, DZVoiceInputViewDelegate, DZInputActionElementDelegate>
 {
     UISwipeGestureRecognizer* _swipeDown;
-    UIView* _maskView;
     //
     UIView* _contentView;
     DZInputToolbar* _toolbar;
@@ -61,18 +64,29 @@ static NSString* const kEventNone = @"innone";
     BOOL _isShowAddtions;
     //
     TKStateMachine* _stateMachine;
+    //
+    CGFloat _currentAddtionHeight;
+    //
+    DZAlphaView* _pullDownView;
 }
 @property (nonatomic, strong) DZAIOViewController* rootViewController;
+@property (nonatomic, strong, readonly) DZAIOTableElement* aioElement;
 @property (nonatomic, strong) DZInputToolbar* toolbar;
 @property (nonatomic, strong) DZInputActionViewController* emojiViewController;
 @property (nonatomic, strong) DZInputActionViewController* actionViewController;
 @property (nonatomic, assign) BOOL isShowAddtions;
+@property (nonatomic, strong) UISwipeGestureRecognizer* swipeDown;
+@property (nonatomic, strong)    DZAlphaView* pullDownView;
 @end
 
 
 @implementation DZInputViewController
 #pragma Doing thing when event occurs
 
+- (void) setIsShowAddtions:(BOOL)isShowAddtions
+{
+    _isShowAddtions = isShowAddtions;
+}
 
 - (void) sendTextEvent
 {
@@ -148,8 +162,10 @@ static NSString* const kEventNone = @"innone";
     [voiceState setWillEnterStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar audioButtonShowNormal:NO];
         [wSelf voiceButtonToggleVoice];
-        [wSelf layoutWithAddtionHeight:0];
+        [wSelf layoutWithHiddenAdditon];
+        wSelf.pullDownView.userInteractionEnabled= NO;
     }];
+    
     [voiceState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar audioButtonShowNormal:YES];
         [wSelf voiceButtonToggleKeyboard];
@@ -158,9 +174,11 @@ static NSString* const kEventNone = @"innone";
     [emojiState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar emojiButtonShowNormal:NO];
         [wSelf emojiButtonToggleEmoji];
-        [wSelf layoutWithAddtionHeight:kDZAdditionHeight];
+        [wSelf layoutWithShowAddtion];
         [wSelf.view bringSubviewToFront:wSelf.emojiViewController.view];
         wSelf.isShowAddtions = YES;
+         wSelf.pullDownView.userInteractionEnabled = YES;
+        
     }];
     [emojiState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar emojiButtonShowNormal:YES];
@@ -172,9 +190,11 @@ static NSString* const kEventNone = @"innone";
     [actionState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar actionButtonShowNormal:NO];
         [wSelf actionButtonToggleAction];
-        [wSelf layoutWithAddtionHeight:kDZAdditionHeight];
+        [self layoutWithShowAddtion];
         [wSelf.view bringSubviewToFront:wSelf.actionViewController.view];
         wSelf.isShowAddtions = YES;
+         wSelf.pullDownView.userInteractionEnabled = YES;
+
     }];
     
     [actionState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
@@ -186,6 +206,8 @@ static NSString* const kEventNone = @"innone";
     
     [textState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar.textInputView.textView becomeFirstResponder];
+        wSelf.pullDownView.userInteractionEnabled = YES;
+
     }];
     
     [textState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
@@ -195,6 +217,16 @@ static NSString* const kEventNone = @"innone";
         }
         [wSelf.toolbar.textInputView.textView resignFirstResponder];
     }];
+    
+    [noneState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
+        wSelf.isShowAddtions = NO;
+        wSelf.pullDownView.userInteractionEnabled = NO;
+        [wSelf layoutWithHiddenAdditon];
+    }];
+    [noneState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
+
+    }];
+    
     [_stateMachine addStates:@[textState, noneState, emojiState, voiceState, actionState]];
     
     TKEvent* textEvent = [TKEvent eventWithName:kEventText transitioningFromStates:@[noneState, voiceState, actionState, emojiState] toState:textState];
@@ -232,6 +264,7 @@ static NSString* const kEventNone = @"innone";
     
     [self appendChildViewController:_rootViewController];
     _toolbar = [DZInputToolbar new];
+    _toolbar.voiceInputView.delegate = self;
     [self.view addSubview:_toolbar];
     //
     _contentView = _rootViewController.view;
@@ -247,8 +280,24 @@ static NSString* const kEventNone = @"innone";
 
     [self appendChildViewController:_emojiViewController];
     [self appenChildVC:_actionViewController];
+    //
+    _pullDownView = [DZAlphaView new];
+    [self.view addSubview:_pullDownView];
+
+    _swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeDownGestrue:)];
+    _swipeDown.direction = UISwipeGestureRecognizerDirectionDown;
+    _swipeDown.numberOfTouchesRequired = 1;
+    [_pullDownView addGestureRecognizer:_swipeDown];
+    _swipeDown.delegate = self;
+    _pullDownView.userInteractionEnabled = NO;
 }
 
+- (void) handleSwipeDownGestrue:(UISwipeGestureRecognizer*)gs
+{
+    if (gs.state == UIGestureRecognizerStateRecognized) {
+        [_stateMachine fireEvent:kEventNone userInfo:nil error:nil];
+    }
+}
 
 - (void) setupTextView
 {
@@ -273,7 +322,11 @@ static NSString* const kEventNone = @"innone";
     [self setupMechine];
     [self setupTextView];
     self.edgesForExtendedLayout  = UIRectEdgeNone;
-    _swipeDown.enabled = NO;
+}
+
+- (DZAIOTableElement*) aioElement
+{
+    return (DZAIOTableElement*)self.rootViewController.tableElement;
 }
 
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -302,7 +355,7 @@ static NSString* const kEventNone = @"innone";
     [super viewWillLayoutSubviews];
     if (_isFirstLayout) {
         _isFirstLayout =!_isFirstLayout;
-        [self layoutWithAddtionHeight:0];
+        [self layoutWithHiddenAdditon];
     }
 }
 
@@ -323,6 +376,7 @@ static NSString* const kEventNone = @"innone";
 {
     [super viewWillDisappear:animated];
     [_element willBeginHandleResponser:self];
+    [self.view bringSubviewToFront:_pullDownView];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -335,16 +389,26 @@ static NSString* const kEventNone = @"innone";
 
 - (void) layoutWithAddtionHeight:(CGFloat)height
 {
+    _currentAddtionHeight = height;
     CGRect addtionRect;
     CGRect toolbarRect;
     CGRect contentRect;
     
     CGRectDivide(self.view.bounds, &addtionRect, &contentRect, height, CGRectMaxYEdge);
-    CGRectDivide(contentRect, &toolbarRect, &contentRect, _toolbar.adjustHeight, CGRectMaxYEdge);
+    
+    CGFloat const kMaxToolHeight = 100;
+    CGFloat toolbarHeigth = MIN(_toolbar.adjustHeight, kMaxToolHeight);
+    CGRectDivide(contentRect, &toolbarRect, &contentRect, toolbarHeigth, CGRectMaxYEdge);
+    if (_toolbar.adjustHeight > kMaxToolHeight) {
+        _toolbar.textInputView.textView.scrollEnabled = YES;
+    } else {
+        _toolbar.textInputView.textView.scrollEnabled = NO;
+    }
     _toolbar.frame = toolbarRect;
     _contentView.frame = contentRect;
     _emojiViewController.view.frame = addtionRect;
     _actionViewController.view.frame = addtionRect;
+    _pullDownView.frame = contentRect;
 }
 
 
@@ -353,10 +417,10 @@ static NSString* const kEventNone = @"innone";
     kDZAdditionHeight = CGRectGetHeight(transition.endFrame);
     void(^AnimationBlock)(void) = ^(void) {
         if (transition.type == DZKeyboardTransitionShow) {
-            [self layoutWithAddtionHeight:transition.endFrame.size.height];
+            [self layoutWithShowAddtion];
         } else {
             if (!_isShowAddtions) {
-                [self layoutWithAddtionHeight:0];
+                [self layoutWithHiddenAdditon];
             }
         }
     };
@@ -373,5 +437,57 @@ static NSString* const kEventNone = @"innone";
 - (BOOL) textViewShouldEndEditing:(UITextView *)textView
 {
     return YES;
+}
+
+- (void) textViewDidChange:(UITextView *)textView
+{
+    NSLog(@"%f",_toolbar.textInputView.aimHeight);
+    [UIView animateWithDuration:0.25 animations:^{
+        [self layoutWithAddtionHeight:_currentAddtionHeight];
+    }];
+}
+
+- (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    if ([text isEqualToString:@"\n"]) {
+        [self sendText:textView.text];
+        textView.text = @"";
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+- (void) sendText:(NSString*)text
+{
+    [self.aioElement inputText:text];
+}
+#pragma Layouts
+- (void) layoutWithShowAddtion
+{
+    [self layoutWithAddtionHeight:kDZAdditionHeight];
+    [self.rootViewController.tableElement scrollToEnd];
+}
+
+- (void) layoutWithHiddenAdditon
+{
+    [self layoutWithAddtionHeight:0];
+}
+
+
+#pragma Audio Recorder
+
+- (void) voiceInputView:(DZVoiceInputView *)inputView didFinishRecord:(K12AudioRecorder *)recorder
+{
+    [self.aioElement inputVoice:recorder.recorder.url];
+}
+
+#pragma Actions
+- (void) actionElement:(DZInputActionElement *)element didSelectAction:(EKElement *)itemElement
+{
+    if ([itemElement isKindOfClass:[DZAIOImageActionElement class]]) {
+        DZAIOImageActionElement* imageAction = (DZAIOImageActionElement*)itemElement;
+        [self.aioElement inputImage:imageAction.image];
+    }
 }
 @end
