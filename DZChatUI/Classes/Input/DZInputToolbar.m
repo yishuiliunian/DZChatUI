@@ -22,7 +22,8 @@
 
 #define SetButtonImages(btn ,normal, hl) \
 [btn setImage:LoadPodImage(normal) forState:UIControlStateNormal]; \
-[btn setImage:LoadPodImage(hl) forState:UIControlStateHighlighted];
+[btn setImage:LoadPodImage(hl) forState:UIControlStateHighlighted]; \
+[btn setImage:LoadPodImage(hl) forState:UIControlStateSelected];
 
 
 CGFloat const kSTMinHeight = 44;
@@ -48,10 +49,10 @@ CGFloat const kActionHeight = 271;
 - (void) audioButtonShowNormal:(BOOL)normal
 {
     if (normal) {
-        SetButtonImages(_audioButton, ToolViewInputVoice, ToolViewInputVoiceHL);
+        SetButtonImages(_audioButton, voice_button, voice_button_click);
         [self changeToTextInput];
     } else {
-        SetButtonImages(_audioButton, ToolViewKeyboard, ToolViewKeyboardHL);
+        SetButtonImages(_audioButton, keyboard_button, keyboard_button_click);
         [self changeToVoiceInput];
     }
 }
@@ -59,18 +60,18 @@ CGFloat const kActionHeight = 271;
 - (void) emojiButtonShowNormal:(BOOL)normal
 {
     if (normal) {
-         SetButtonImages(_emojiButton, ToolViewInputVoice, ToolViewInputVoiceHL);
+         SetButtonImages(_emojiButton, emoji_button, emoji_button_click);
     } else {
-         SetButtonImages(_emojiButton, ToolViewKeyboard, ToolViewKeyboardHL);
+         SetButtonImages(_emojiButton, keyboard_button, keyboard_button_click);
     }
 }
 
 - (void) actionButtonShowNormal:(BOOL)normal
 {
     if (normal) {
-           SetButtonImages(_actionButton, ToolViewInputVoice, ToolViewInputVoiceHL); 
+           SetButtonImages(_actionButton, action_button, action_button_click);
     } else {
-           SetButtonImages(_actionButton, ToolViewKeyboard, ToolViewKeyboardHL); 
+           SetButtonImages(_actionButton, keyboard_button, keyboard_button_click);
     }
 }
 
@@ -89,9 +90,9 @@ CGFloat const kActionHeight = 271;
     self.adjustHeight = kSTMinHeight;
     self.backgroundColor = [UIColor lightTextColor];
     
-    SetButtonImages(_audioButton, ToolViewInputVoice, ToolViewInputVoiceHL);
-    SetButtonImages(_actionButton, ToolViewInputVoice, ToolViewInputVoiceHL);
-    SetButtonImages(_emojiButton, ToolViewInputVoice, ToolViewInputVoiceHL);
+    [self emojiButtonShowNormal:YES];
+    [self actionButtonShowNormal:YES];
+    [self audioButtonShowNormal:YES];
     //
     _backgroundImageView.image = [LoadPodImage(InputToolBar) imageWithAlignmentRectInsets:UIEdgeInsetsMake(5, 0, 0, 0)];
     //

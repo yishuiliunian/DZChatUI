@@ -9,3 +9,4 @@
 #import <Foundation/Foundation.h>
 #define LoadPodImage(name)   [UIImage imageNamed:@"DZChatUI.bundle/"#name inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil]
 
+#define LoadPodImageWithStringName(name)   [UIImage imageNamed:[NSString stringWithFormat:@"DZChatUI.bundle/%@",name] inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil]

@@ -178,12 +178,14 @@ static NSString* const kEventNone = @"innone";
         [wSelf.view bringSubviewToFront:wSelf.emojiViewController.view];
         wSelf.isShowAddtions = YES;
          wSelf.pullDownView.userInteractionEnabled = YES;
+        [wSelf.emojiViewController.collectionView reloadData];
         
     }];
     [emojiState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar emojiButtonShowNormal:YES];
         [wSelf emojiButtonToggleKeyboard];
         wSelf.isShowAddtions  = NO;
+        
     }];
     
     
@@ -414,7 +416,7 @@ static NSString* const kEventNone = @"innone";
 
 - (void) keyboardChanged:(DZKeyboardTransition)transition
 {
-    kDZAdditionHeight = CGRectGetHeight(transition.endFrame);
+    kDZAdditionHeight = MAX(CGRectGetHeight(transition.endFrame), kDZAdditionHeight);
     void(^AnimationBlock)(void) = ^(void) {
         if (transition.type == DZKeyboardTransitionShow) {
             [self layoutWithShowAddtion];
@@ -452,6 +454,7 @@ static NSString* const kEventNone = @"innone";
     if ([text isEqualToString:@"\n"]) {
         [self sendText:textView.text];
         textView.text = @"";
+        [self adjustToolbarHeight];
         return NO;
     } else {
         return YES;
@@ -461,6 +464,12 @@ static NSString* const kEventNone = @"innone";
 - (void) sendText:(NSString*)text
 {
     [self.aioElement inputText:text];
+}
+- (void) adjustToolbarHeight
+{
+    [UIView animateWithDuration:0.25 animations:^{
+        [self layoutWithAddtionHeight:_currentAddtionHeight];
+    }];
 }
 #pragma Layouts
 - (void) layoutWithShowAddtion
@@ -488,6 +497,15 @@ static NSString* const kEventNone = @"innone";
     if ([itemElement isKindOfClass:[DZAIOImageActionElement class]]) {
         DZAIOImageActionElement* imageAction = (DZAIOImageActionElement*)itemElement;
         [self.aioElement inputImage:imageAction.image];
+    } else {
+        if ([itemElement isKindOfClass:[DZEmojiItemElement class]]) {
+            DZEmojiItemElement* emoji = (DZEmojiItemElement*)itemElement;
+            NSString* text = _toolbar.textInputView.textView.text;
+            text = text ? text :@"";
+            _toolbar.textInputView.textView.text = [text stringByAppendingString:emoji.emoji];
+            [self adjustToolbarHeight];
+      
+        }
     }
 }
 @end

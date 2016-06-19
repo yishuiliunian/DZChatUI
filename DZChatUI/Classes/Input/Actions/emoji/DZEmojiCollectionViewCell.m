@@ -18,6 +18,7 @@
     _textLabel = [UILabel new];
     [self.contentView addSubview:_textLabel];
     _textLabel.textAlignment = NSTextAlignmentCenter;
+    _textLabel.font = [UIFont systemFontOfSize:30];
     return self;
 }
 - (void) layoutSubviews

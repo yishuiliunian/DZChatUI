@@ -18,5 +18,6 @@
 @end
 
 @interface DZVoiceInputView : DZInputMiddleView
+@property (nonatomic, assign) int maxRecordTime;
 @property (nonatomic, weak) id<DZVoiceInputViewDelegate> delegate;
 @end
