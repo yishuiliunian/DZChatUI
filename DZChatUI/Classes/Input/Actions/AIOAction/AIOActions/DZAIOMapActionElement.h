@@ -8,6 +8,12 @@
 
 #import <DZChatUI/DZChatUI.h>
 #import "DZAIOActionItemElement.h"
-@interface DZAIOMapActionElement : DZAIOActionItemElement
 
+@class DZAIOMapActionElement;
+@protocol DZAIOMapActionEvents <NSObject>
+- (void) mapElementLocationReady:(DZAIOMapActionElement*)ele;
+@end
+@class YHLocation;
+@interface DZAIOMapActionElement : DZAIOActionItemElement
+@property (nonatomic, strong, readonly) YHLocation* location;
 @end

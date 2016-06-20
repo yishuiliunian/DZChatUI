@@ -10,14 +10,15 @@
 #import "DZAIOActionItemElement.h"
 #import "DZAIOImageActionElement.h"
 #import "DZChatTools.h"
-
+#import "DZAIOMapActionElement.h"
 #define LoadPodImage(name)   [UIImage imageNamed:@"DZChatUI.bundle/"#name inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil]
 
 
-@interface DZAIOActionElement () <DZAIOImageActionEvents>
+@interface DZAIOActionElement () <DZAIOImageActionEvents, DZAIOMapActionEvents>
 {
     DZAIOImageActionElement* _imageItem;
     DZAIOImageActionElement* _camertaItem;
+    DZAIOMapActionElement* _mapitem;
 }
 @end
 @implementation DZAIOActionElement
@@ -26,10 +27,13 @@
 {
     _imageItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(actiion_image) title:@"照片"];
     _camertaItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(actiion_camera) title:@"相机"];
+    _mapitem  = [[DZAIOMapActionElement alloc] initWithTitleImage:LoadPodImage(action_map) title:@"位置"];
     _camertaItem.sourceType = UIImagePickerControllerSourceTypeCamera;
     [_dataController clean];
     [_dataController addObject:_imageItem];
     [_dataController addObject:_camertaItem];
+    [_dataController addObject:_mapitem];
+    
     [super reloadData];
 }
 
@@ -51,6 +55,7 @@
 {
     [super willBeginHandleResponser:responser];
     [self.eventBus addHandler:self priority:1.0 port:@selector(imageElement:getImage:)];
+    [self.eventBus addHandler:self priority:1.0 port:@selector(mapElementLocationReady:)];
 }
 
 - (void) imageElement:(DZAIOImageActionElement *)ele getImage:(UIImage *)image
@@ -60,6 +65,12 @@
     }
 }
 
+- (void) mapElementLocationReady:(DZAIOMapActionElement *)ele
+{
+    if ([self.delegate respondsToSelector:@selector(actionElement:didSelectAction:)]) {
+        [self.delegate actionElement:self didSelectAction:ele];
+    }
+}
 
 - (void) didRegsinHandleResponser:(UIResponder *)responser
 {

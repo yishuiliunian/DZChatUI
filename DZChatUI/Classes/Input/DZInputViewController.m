@@ -24,7 +24,7 @@
 #import <DZAudio/DZAudio.h>
 #import "DZAlphaView.h"
 #import "DZAIOImageActionElement.h"
-
+#import "DZAIOMapActionElement.h"
 static CGFloat kDZAdditionHeight = 271;
 
 
@@ -497,15 +497,18 @@ static NSString* const kEventNone = @"innone";
     if ([itemElement isKindOfClass:[DZAIOImageActionElement class]]) {
         DZAIOImageActionElement* imageAction = (DZAIOImageActionElement*)itemElement;
         [self.aioElement inputImage:imageAction.image];
-    } else {
-        if ([itemElement isKindOfClass:[DZEmojiItemElement class]]) {
-            DZEmojiItemElement* emoji = (DZEmojiItemElement*)itemElement;
-            NSString* text = _toolbar.textInputView.textView.text;
-            text = text ? text :@"";
-            _toolbar.textInputView.textView.text = [text stringByAppendingString:emoji.emoji];
-            [self adjustToolbarHeight];
-      
-        }
+    } else if ([itemElement isKindOfClass:[DZEmojiItemElement class]]) {
+        DZEmojiItemElement* emoji = (DZEmojiItemElement*)itemElement;
+        NSString* text = _toolbar.textInputView.textView.text;
+        text = text ? text :@"";
+        _toolbar.textInputView.textView.text = [text stringByAppendingString:emoji.emoji];
+        [self adjustToolbarHeight];
+    } else if ([itemElement isKindOfClass:[DZAIOMapActionElement class]]) {
+        DZAIOMapActionElement* mapEle = (DZAIOMapActionElement*)itemElement;
+        [self.aioElement inputLocation:mapEle.location];
+    }
+    else {
+        DDLogError(@"Get Data, but can not decode it");
     }
 }
 @end
