@@ -56,4 +56,5 @@ TODO: Add long description of the pod here.
   s.dependency 'DZLogger'
   s.dependency 'YHMapLocation'
   s.dependency 'DZAlertPool'
+  s.dependency 'YYText'
 end

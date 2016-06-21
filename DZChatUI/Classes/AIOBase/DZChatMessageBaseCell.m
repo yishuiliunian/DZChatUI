@@ -10,6 +10,14 @@
 #import "DZChatMessageBaseCell.h"
 #import "DZGeometryTools.h"
 #import "DZProgrameDefines.h"
+#import "YYText.h"
+@interface DZChatMessageBaseCell()
+{
+    UITapGestureRecognizer* _tapGesture;
+}
+@end
+
+
 @implementation DZChatMessageBaseCell
 - (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -21,7 +29,20 @@
     INIT_SUBVIEW_UIImageView(self.contentView, _bubleImageView);
     INIT_SUBVIEW_UILabel(self.contentView, _nickLabel);
     INIT_SUBVIEW(self.contentView,FLAnimatedImageView ,_sendStatusImageView);
+    INIT_SUBVIEW(self.contentView, YYLabel, _timeLineLabel);
+    INIT_GESTRUE_TAP_IN_VIEW(_tapGesture, _sendStatusImageView, 1, 1);
+    [_tapGesture addTarget:self action:@selector(handleTapStatusImageView:)];
+    _sendStatusImageView.userInteractionEnabled = YES;
     return self;
+}
+
+- (void) handleTapStatusImageView:(UITapGestureRecognizer*)tap
+{
+    if (tap.state == UIGestureRecognizerStateRecognized) {
+        if ([self.chatStatusDelegate respondsToSelector:@selector(chatCellDidTapStatusView:)]) {
+            [self.chatStatusDelegate chatCellDidTapStatusView:self];
+        }
+    }
 }
 
 - (void) layoutSubviews
