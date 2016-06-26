@@ -9,7 +9,15 @@
 #import <ElementKit/ElementKit.h>
 #import "DZInputToolbar.h"
 @class YHLocation;
+
+typedef  NS_ENUM(NSInteger, DZAIOToolbarType)
+{
+    DZAIOToolbarTypeNormal,
+    DZAIOToolbarTypeNone
+};
+
 @interface DZAIOTableElement : EKAdjustTableElement
+@property (nonatomic, assign)DZAIOToolbarType  AIOToolbarType;
 - (void) handleLoadOldMessage;
 - (void) inputImage:(UIImage*)image;
 - (void) inputVoice:(NSURL*)url;

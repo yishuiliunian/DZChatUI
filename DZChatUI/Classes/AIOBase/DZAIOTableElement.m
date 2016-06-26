@@ -10,4 +10,13 @@
 
 @implementation DZAIOTableElement
 
+- (instancetype) init
+{
+    self = [super init];
+    if (!self) {
+        return self;
+    }
+    _AIOToolbarType = DZAIOToolbarTypeNormal;
+    return self;
+}
 @end

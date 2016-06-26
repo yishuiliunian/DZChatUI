@@ -35,6 +35,8 @@
 
     [_tapGesture addTarget:self action:@selector(handleTapStatusImageView:)];
     _sendStatusImageView.userInteractionEnabled = YES;
+    _nickLabel.font = [UIFont systemFontOfSize:11];
+    _nickLabel.textColor = [UIColor grayColor];
     return self;
 }
 

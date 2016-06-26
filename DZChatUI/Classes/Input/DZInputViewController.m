@@ -275,7 +275,11 @@ static NSString* const kEventNone = @"innone";
 {
     
     [self appendChildViewController:_rootViewController];
-    _toolbar = [DZInputToolbar new];
+    if (self.aioElement.AIOToolbarType == DZAIOToolbarTypeNone) {
+    } else {
+        _toolbar = [DZInputToolbar new];
+    }
+
     _toolbar.voiceInputView.delegate = self;
     [self.view addSubview:_toolbar];
     //
