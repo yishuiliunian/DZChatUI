@@ -20,5 +20,6 @@
 @property (nonatomic, strong) UIImageView* avatarImageView;
 @property (nonatomic, strong) UIImageView* bubleImageView;
 @property (nonatomic, strong) FLAnimatedImageView* sendStatusImageView;
-@property (nonatomic, strong) UILabel* timeLineLabel;
+@property (nonatomic, strong) YYLabel* timeLineLabel;
+@property (nonatomic, strong) YYLabel* bottomIndictorLabel;
 @end

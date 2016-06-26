@@ -30,7 +30,9 @@
     INIT_SUBVIEW_UILabel(self.contentView, _nickLabel);
     INIT_SUBVIEW(self.contentView,FLAnimatedImageView ,_sendStatusImageView);
     INIT_SUBVIEW(self.contentView, YYLabel, _timeLineLabel);
+    INIT_SUBVIEW(self.contentView, YYLabel, _bottomIndictorLabel);
     INIT_GESTRUE_TAP_IN_VIEW(_tapGesture, _sendStatusImageView, 1, 1);
+
     [_tapGesture addTarget:self action:@selector(handleTapStatusImageView:)];
     _sendStatusImageView.userInteractionEnabled = YES;
     return self;

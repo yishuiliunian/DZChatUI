@@ -67,7 +67,6 @@ static NSString* const kEventNone = @"innone";
     //
     CGFloat _currentAddtionHeight;
     //
-    DZAlphaView* _pullDownView;
 }
 @property (nonatomic, strong) DZAIOViewController* rootViewController;
 @property (nonatomic, strong, readonly) DZAIOTableElement* aioElement;
@@ -148,6 +147,19 @@ static NSString* const kEventNone = @"innone";
     [self emojiButtonToggleKeyboard];
     [self actionButtonToggleKeyboard];
 }
+
+- (void) enablePullDown
+{
+   _swipeDown.enabled = YES;
+ 
+}
+
+- (void) disablePullDown
+{
+//    self.pullDownView.userInteractionEnabled= NO;
+    _swipeDown.enabled = NO;
+ 
+}
 - (void) setupMechine
 {
     __weak typeof(self) wSelf = self;
@@ -163,7 +175,7 @@ static NSString* const kEventNone = @"innone";
         [wSelf.toolbar audioButtonShowNormal:NO];
         [wSelf voiceButtonToggleVoice];
         [wSelf layoutWithHiddenAdditon];
-        wSelf.pullDownView.userInteractionEnabled= NO;
+        [wSelf disablePullDown];
     }];
     
     [voiceState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
@@ -177,7 +189,7 @@ static NSString* const kEventNone = @"innone";
         [wSelf layoutWithShowAddtion];
         [wSelf.view bringSubviewToFront:wSelf.emojiViewController.view];
         wSelf.isShowAddtions = YES;
-         wSelf.pullDownView.userInteractionEnabled = YES;
+        [wSelf enablePullDown];
         [wSelf.emojiViewController.collectionView reloadData];
         
     }];
@@ -185,17 +197,16 @@ static NSString* const kEventNone = @"innone";
         [wSelf.toolbar emojiButtonShowNormal:YES];
         [wSelf emojiButtonToggleKeyboard];
         wSelf.isShowAddtions  = NO;
-        
     }];
     
     
     [actionState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar actionButtonShowNormal:NO];
         [wSelf actionButtonToggleAction];
-        [self layoutWithShowAddtion];
+        [wSelf layoutWithShowAddtion];
         [wSelf.view bringSubviewToFront:wSelf.actionViewController.view];
         wSelf.isShowAddtions = YES;
-         wSelf.pullDownView.userInteractionEnabled = YES;
+        [wSelf enablePullDown];
 
     }];
     
@@ -208,8 +219,7 @@ static NSString* const kEventNone = @"innone";
     
     [textState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar.textInputView.textView becomeFirstResponder];
-        wSelf.pullDownView.userInteractionEnabled = YES;
-
+        [wSelf enablePullDown];
     }];
     
     [textState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
@@ -222,7 +232,7 @@ static NSString* const kEventNone = @"innone";
     
     [noneState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
         wSelf.isShowAddtions = NO;
-        wSelf.pullDownView.userInteractionEnabled = NO;
+        [wSelf disablePullDown];
         [wSelf layoutWithHiddenAdditon];
     }];
     [noneState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
@@ -283,15 +293,14 @@ static NSString* const kEventNone = @"innone";
     [self appendChildViewController:_emojiViewController];
     [self appenChildVC:_actionViewController];
     //
-    _pullDownView = [DZAlphaView new];
-    [self.view addSubview:_pullDownView];
 
     _swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeDownGestrue:)];
     _swipeDown.direction = UISwipeGestureRecognizerDirectionDown;
     _swipeDown.numberOfTouchesRequired = 1;
-    [_pullDownView addGestureRecognizer:_swipeDown];
+    _swipeDown.delaysTouchesBegan = YES;
     _swipeDown.delegate = self;
-    _pullDownView.userInteractionEnabled = NO;
+    [self.view addGestureRecognizer:_swipeDown];
+    [self disablePullDown];
 }
 
 - (void) handleSwipeDownGestrue:(UISwipeGestureRecognizer*)gs
