@@ -19,6 +19,15 @@
     if (!self) {
         return self;
     }
+    
+//    YYTextDebugOption *debugOptions = [YYTextDebugOption new];
+//    debugOptions.baselineColor = [UIColor redColor];
+//    debugOptions.CTFrameBorderColor = [UIColor redColor];
+//    debugOptions.CTLineFillColor = [UIColor colorWithRed:0.000 green:0.463 blue:1.000 alpha:0.180];
+//    debugOptions.CGGlyphBorderColor = [UIColor colorWithRed:1.000 green:0.524 blue:0.000 alpha:0.200];
+//    [YYTextDebugOption setSharedDebugOption:debugOptions];
+//    
+    
     INIT_SELF_SUBVIEW(YYTextView, _textView);
     _textView.delegate = self;
     _textView.backgroundColor = [UIColor whiteColor];
@@ -37,7 +46,6 @@
     _textView.returnKeyType = UIReturnKeySend;
     _textView.textParser = [DZEmojiMapper mapper].textEmojiParser;
     _textView.textVerticalAlignment = YYTextVerticalAlignmentCenter;
-    
     return self;
 }
 
@@ -45,7 +53,7 @@
 {
     CGSize constrainedSize = CGSizeMake(CGRectGetWidth(self.bounds) - 10, CGFLOAT_MAX);
     CGSize size = [_textView sizeThatFits:constrainedSize];
-    return  MAX(35, size.height + 20);
+    return  MAX(35, size.height);
 }
 - (void) layoutSubviews
 {
