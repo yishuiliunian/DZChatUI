@@ -9,6 +9,7 @@
 #import "DZInputMiddleView.h"
 #import <DZAdjustFrame/DZAdjustFrame.h>
 #import "DZAlignTextView.h"
+#import "YYText.h"
 @interface DZTextInputView : DZInputMiddleView
-@property (nonatomic, strong, readonly) DZAlignTextView * textView;
+@property (nonatomic, strong, readonly) YYTextView* textView;
 @end

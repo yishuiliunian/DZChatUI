@@ -7,7 +7,7 @@
 //
 
 #import "DZEmojiCollectionViewCell.h"
-
+#import "DZProgrameDefines.h"
 @implementation DZEmojiCollectionViewCell
 - (instancetype) initWithFrame:(CGRect)frame
 {
@@ -15,15 +15,12 @@
     if (!self) {
         return self;
     }
-    _textLabel = [UILabel new];
-    [self.contentView addSubview:_textLabel];
-    _textLabel.textAlignment = NSTextAlignmentCenter;
-    _textLabel.font = [UIFont systemFontOfSize:30];
+    INIT_SELF_SUBVIEW_UIImageView(_emojiImageView);
     return self;
 }
 - (void) layoutSubviews
 {
     [super layoutSubviews];
-    _textLabel.frame = self.contentView.bounds;
+    _emojiImageView.frame = self.contentView.bounds;
 }
 @end

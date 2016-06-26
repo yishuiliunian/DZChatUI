@@ -9,6 +9,7 @@
 #import "DZTextInputView.h"
 #import "DZProgrameDefines.h"
 #import "HexColors.h"
+#import "DZEmojiMapper.h"
 
 @implementation DZTextInputView
 
@@ -18,7 +19,7 @@
     if (!self) {
         return self;
     }
-    INIT_SELF_SUBVIEW(DZAlignTextView, _textView);
+    INIT_SELF_SUBVIEW(YYTextView, _textView);
     _textView.delegate = self;
     _textView.backgroundColor = [UIColor whiteColor];
     _textView.textColor = [UIColor blackColor];
@@ -31,15 +32,19 @@
     _textView.layer.borderWidth = 1;
     _textView.layer.cornerRadius = 5;
     _textView.font = [UIFont systemFontOfSize:15];
-    _textView.textAlignment = NSTextAlignmentLeft;
+
     _textView.scrollEnabled = NO;
     _textView.returnKeyType = UIReturnKeySend;
+    _textView.textParser = [DZEmojiMapper mapper].textEmojiParser;
+    _textView.textVerticalAlignment = YYTextVerticalAlignmentCenter;
+    
     return self;
 }
 
 - (CGFloat) aimHeight
 {
-    CGSize size = [_textView.text sizeWithFont:_textView.font constrainedToSize:CGSizeMake(CGRectGetWidth(self.bounds) - 10, CGFLOAT_MAX)];
+    CGSize constrainedSize = CGSizeMake(CGRectGetWidth(self.bounds) - 10, CGFLOAT_MAX);
+    CGSize size = [_textView sizeThatFits:constrainedSize];
     return  MAX(35, size.height + 20);
 }
 - (void) layoutSubviews

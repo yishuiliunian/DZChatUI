@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface DZEmojiCollectionViewCell : UICollectionViewCell
-@property (nonatomic, strong, readonly) UILabel* textLabel;
+@property (nonatomic, strong, readonly) UIImageView* emojiImageView;
 @end

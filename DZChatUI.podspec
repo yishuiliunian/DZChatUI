@@ -33,7 +33,7 @@ TODO: Add long description of the pod here.
   s.source_files = 'DZChatUI/Classes/**/*'
 
   s.resource_bundles = {
-     'DZChatUI' => ['DZChatUI/Assets/*.png']
+     'DZChatUI' => ['DZChatUI/Assets/**/*']
   }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
