@@ -259,7 +259,7 @@ static NSString* const kEventNone = @"innone";
     _element = ele;
     _isFirstLayout = YES;
     _isShowAddtions = NO;
-
+    self.aioElement.inputViewController  = self;
     return self;
 }
 

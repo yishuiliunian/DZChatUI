@@ -16,8 +16,10 @@ typedef  NS_ENUM(NSInteger, DZAIOToolbarType)
     DZAIOToolbarTypeNone
 };
 
+@class DZInputViewController;
 @interface DZAIOTableElement : EKAdjustTableElement
 @property (nonatomic, assign)DZAIOToolbarType  AIOToolbarType;
+@property (nonatomic, weak) DZInputViewController* inputViewController;
 - (void) handleLoadOldMessage;
 - (void) inputImage:(UIImage*)image;
 - (void) inputVoice:(NSURL*)url;
