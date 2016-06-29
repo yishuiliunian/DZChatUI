@@ -260,6 +260,7 @@ static NSString* const kEventNone = @"innone";
     _isFirstLayout = YES;
     _isShowAddtions = NO;
     self.aioElement.inputViewController  = self;
+    self.hidesBottomBarWhenPushed = YES;
     return self;
 }
 
