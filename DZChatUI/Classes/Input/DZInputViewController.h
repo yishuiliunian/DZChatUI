@@ -14,6 +14,7 @@
     @protected
     EKElement* _element;
 }
+@property (nonatomic, strong, readonly) UIImageView* backgroundImageView;
 - (instancetype) initWithElement:(EKElement*)ele contentViewController:(DZAIOViewController*)viewController;
 @end
 

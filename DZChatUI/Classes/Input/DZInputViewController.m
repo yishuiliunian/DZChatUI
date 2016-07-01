@@ -75,7 +75,6 @@ static NSString* const kEventNone = @"innone";
 @property (nonatomic, strong) DZInputActionViewController* actionViewController;
 @property (nonatomic, assign) BOOL isShowAddtions;
 @property (nonatomic, strong) UISwipeGestureRecognizer* swipeDown;
-@property (nonatomic, strong)    DZAlphaView* pullDownView;
 @end
 
 
@@ -276,6 +275,7 @@ static NSString* const kEventNone = @"innone";
 {
     
     [self appendChildViewController:_rootViewController];
+    INIT_SUBVIEW_UIImageView(self.view, _backgroundImageView);
     if (self.aioElement.AIOToolbarType == DZAIOToolbarTypeNone) {
     } else {
         _toolbar = [DZInputToolbar new];
@@ -373,6 +373,7 @@ static NSString* const kEventNone = @"innone";
         _isFirstLayout =!_isFirstLayout;
         [self layoutWithHiddenAdditon];
     }
+    _backgroundImageView.frame =self.view.bounds;
 }
 
 - (void) viewWillAppear:(BOOL)animated
@@ -392,7 +393,6 @@ static NSString* const kEventNone = @"innone";
 {
     [super viewWillDisappear:animated];
     [_element willBeginHandleResponser:self];
-    [self.view bringSubviewToFront:_pullDownView];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -424,7 +424,6 @@ static NSString* const kEventNone = @"innone";
     _contentView.frame = contentRect;
     _emojiViewController.view.frame = addtionRect;
     _actionViewController.view.frame = addtionRect;
-    _pullDownView.frame = contentRect;
 }
 
 
