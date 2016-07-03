@@ -429,7 +429,7 @@ static NSString* const kEventNone = @"innone";
 
 - (void) keyboardChanged:(DZKeyboardTransition)transition
 {
-    kDZAdditionHeight = MAX(CGRectGetHeight(transition.endFrame), kDZAdditionHeight);
+    kDZAdditionHeight = CGRectGetHeight(transition.endFrame);
     void(^AnimationBlock)(void) = ^(void) {
         if (transition.type == DZKeyboardTransitionShow) {
             [self layoutWithShowAddtion];
