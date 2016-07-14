@@ -37,6 +37,7 @@
     _sendStatusImageView.userInteractionEnabled = YES;
     _nickLabel.font = [UIFont systemFontOfSize:11];
     _nickLabel.textColor = [UIColor grayColor];
+    _avatarImageView.layer.masksToBounds = YES;
     return self;
 }
 
