@@ -8,6 +8,9 @@
 
 #import <DZKeyboardAdjust/DZKeyboardAdjust.h>
 #import <ElementKit/ElementKit.h>
+#import "DZInputProtocol.h"
+
+
 @class DZAIOViewController;
 @interface DZInputViewController : UIViewController
 {
@@ -15,7 +18,13 @@
     EKElement* _element;
 }
 @property (nonatomic, strong, readonly) UIImageView* backgroundImageView;
-- (instancetype) initWithElement:(EKElement*)ele contentViewController:(DZAIOViewController*)viewController;
+/**
+ *  0 向下  1向上
+ */
+@property (nonatomic, assign) int scrollDirection;
+- (instancetype) initWithElement:(EKElement*)ele contentViewController:(EKTableViewController*)viewController;
+
+- (void) showTextInputWithPlaceholder:(NSString*)placeholder;
 @end
 
 

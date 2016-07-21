@@ -40,12 +40,27 @@ CGFloat const kActionHeight = 271;
 
 @property (nonatomic, strong) UIImageView* backgroundImageView;
 @property (nonatomic, assign) BOOL showingBottomFunctions;
+@property (nonatomic, assign) BOOL showEmoji;
+@property (nonatomic, assign) BOOL showText;
+@property (nonatomic, assign) BOOL showAudio;
+@property (nonatomic, assign) BOOL showActions;
 @end
 
 
 @implementation DZInputToolbar
 
-
+- (instancetype) initShowType:(int)type
+{
+    self = [self init];
+    if (!self) {
+        return self;
+    }
+    _showEmoji = type &  DZInputToolbarShowTypeEmoji;
+    _showText = type & DZInputToolbarShowTypeText;
+    _showAudio = type & DZInputToolbarShowTypeAudio;
+    _showActions = type & DZInputToolbarShowTypeActions;
+    return self;
+}
 - (void) audioButtonShowNormal:(BOOL)normal
 {
     if (normal) {
@@ -123,6 +138,21 @@ CGFloat const kActionHeight = 271;
     [super layoutSubviews];
     _backgroundImageView.frame=self.bounds;
     
+    CGSize emojiBtnSize = {0,0};
+    if (_showEmoji) {
+        emojiBtnSize = kButtonSize;
+    }
+    
+    CGSize audioBtnSize = {0,0};
+    if (_showAudio) {
+        audioBtnSize = kButtonSize;
+    }
+    
+    CGSize actionBtnSize = {0,0};
+    if (_showActions) {
+        actionBtnSize = kButtonSize;
+    }
+    
 
     CGFloat space = 10;
     CGRect contentRect = self.bounds;
@@ -133,21 +163,20 @@ CGFloat const kActionHeight = 271;
     CGRect actionRect;
     CGFloat inputHeight = _inputMiddleView.aimHeight;
 
-    
     CGRect inputsRect = contentRect;
-    CGRectDivide(inputsRect, &voiceRect, &inputsRect, kButtonSize.width, CGRectMinXEdge);
-    voiceRect = CGRectCenter(voiceRect, kButtonSize);
+    CGRectDivide(inputsRect, &voiceRect, &inputsRect, audioBtnSize.width, CGRectMinXEdge);
+    voiceRect = CGRectCenter(voiceRect, audioBtnSize);
     
     
     inputsRect = CGRectShrink(inputsRect, space, CGRectMinXEdge);
-    CGRectDivide(inputsRect, &actionRect, &inputsRect, kButtonSize.width, CGRectMaxXEdge);
+    CGRectDivide(inputsRect, &actionRect, &inputsRect, actionBtnSize.width, CGRectMaxXEdge);
     inputsRect = CGRectShrink(inputsRect, space, CGRectMaxXEdge);
     
-    CGRectDivide(inputsRect, &emojiRect, &inputsRect, kButtonSize.width, CGRectMaxXEdge);
+    CGRectDivide(inputsRect, &emojiRect, &inputsRect, emojiBtnSize.width, CGRectMaxXEdge);
     inputsRect = CGRectShrink(inputsRect, space, CGRectMaxXEdge);
 
-    emojiRect = CGRectCenter(emojiRect, kButtonSize);
-    actionRect = CGRectCenter(actionRect, kButtonSize);
+    emojiRect = CGRectCenter(emojiRect, emojiBtnSize);
+    actionRect = CGRectCenter(actionRect, actionBtnSize);
     
     
     CGRect(^AlignToBottom)(CGRect) = ^(CGRect rect) {

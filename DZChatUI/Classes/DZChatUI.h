@@ -9,11 +9,9 @@
 #ifndef DZChatUI_h
 #define DZChatUI_h
 
-#import "DZAIOTableElement.h"
-#import "DZAIOViewController.h"
+
 #import "DZInputToolbar.h"
 #import "DZInputViewController.h"
-#import "DZChatMessageBaseCell.h"
-#import "DZChatMessageBaseElement.h"
+#import "DZInputProtocol.h"
 
 #endif /* DZChatUI_h */

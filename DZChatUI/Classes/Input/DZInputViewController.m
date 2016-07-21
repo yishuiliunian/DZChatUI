@@ -7,11 +7,9 @@
 //
 
 #import "DZInputViewController.h"
-#import "DZAIOViewController.h"
 #import "DZEmojiItemElement.h"
 #import "DZEmojiActionElement.h"
 #import "EKCollectionViewController.h"
-#import "DZAIOTableElement.h"
 #import "DZInputToolbar.h"
 #import <DZKeyboardManager/DZKeyboardManager.h>
 #import "DZEmojiActionElement.h"
@@ -25,6 +23,8 @@
 #import "DZAlphaView.h"
 #import "DZAIOImageActionElement.h"
 #import "DZAIOMapActionElement.h"
+#import "DZProgrameDefines.h"
+
 static CGFloat kDZAdditionHeight = 271;
 
 
@@ -68,8 +68,8 @@ static NSString* const kEventNone = @"innone";
     CGFloat _currentAddtionHeight;
     //
 }
-@property (nonatomic, strong) DZAIOViewController* rootViewController;
-@property (nonatomic, strong, readonly) DZAIOTableElement* aioElement;
+@property (nonatomic, strong) EKTableViewController* rootViewController;
+@property (nonatomic, strong, readonly) EKTableElement<DZInputProtocol>* aioElement;
 @property (nonatomic, strong) DZInputToolbar* toolbar;
 @property (nonatomic, strong) DZInputActionViewController* emojiViewController;
 @property (nonatomic, strong) DZInputActionViewController* actionViewController;
@@ -248,7 +248,7 @@ static NSString* const kEventNone = @"innone";
     [_stateMachine addEvents:@[textEvent, voiceEvent, actionEvent, emojiEvent, noneEvent]];
     [_stateMachine setInitialState:noneState];
 }
-- (instancetype) initWithElement:(EKElement *)ele contentViewController:(DZAIOViewController *)viewController
+- (instancetype) initWithElement:(EKElement *)ele contentViewController:(EKTableViewController *)viewController
 {
     self = [self initWithNibName:nil bundle:nil];
     if (!self) {
@@ -277,11 +277,20 @@ static NSString* const kEventNone = @"innone";
     [self appendChildViewController:_rootViewController];
     INIT_SUBVIEW_UIImageView(self.view, _backgroundImageView);
     if (self.aioElement.AIOToolbarType == DZAIOToolbarTypeNone) {
-    } else {
-        _toolbar = [DZInputToolbar new];
+    } else if (self.aioElement.AIOToolbarType == DZAIOToolbarTypeEmoji) {
+        _toolbar = [[DZInputToolbar alloc] initShowType:
+                    DZInputToolbarShowTypeText |
+                    DZInputToolbarShowTypeEmoji
+                    ];
+    }
+    else {
+        _toolbar = [[DZInputToolbar alloc] initShowType:
+                    DZInputToolbarShowTypeText |
+                    DZInputToolbarShowTypeAudio |
+                    DZInputToolbarShowTypeEmoji |
+                    DZInputToolbarShowTypeActions];
     }
 
-    _toolbar.voiceInputView.delegate = self;
     [self.view addSubview:_toolbar];
     //
     _contentView = _rootViewController.view;
@@ -340,9 +349,9 @@ static NSString* const kEventNone = @"innone";
     self.edgesForExtendedLayout  = UIRectEdgeNone;
 }
 
-- (DZAIOTableElement*) aioElement
+- (EKTableElement<DZInputProtocol>*) aioElement
 {
-    return (DZAIOTableElement*)self.rootViewController.tableElement;
+    return (EKTableElement<DZInputProtocol>*)self.rootViewController.tableElement;
 }
 
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -354,13 +363,6 @@ static NSString* const kEventNone = @"innone";
 {
     return YES;
 }
-
-
-- (void) scroolToEnd
-{
-    [(DZAIOTableElement*)_rootViewController.tableElement scrollToEnd];
-}
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -477,6 +479,8 @@ static NSString* const kEventNone = @"innone";
 - (void) sendText:(NSString*)text
 {
     [self.aioElement inputText:text];
+    self.toolbar.textInputView.textView.placeholderText = nil;
+
 }
 - (void) adjustToolbarHeight
 {
@@ -488,7 +492,11 @@ static NSString* const kEventNone = @"innone";
 - (void) layoutWithShowAddtion
 {
     [self layoutWithAddtionHeight:kDZAdditionHeight];
-    [self.rootViewController.tableElement scrollToEnd];
+    if (self.scrollDirection == 0) {
+        [self.rootViewController.tableElement scrollToEnd];
+    } else {
+        [self.rootViewController.tableView scrollsToTop];
+    }
 }
 
 - (void) layoutWithHiddenAdditon
@@ -502,6 +510,8 @@ static NSString* const kEventNone = @"innone";
 - (void) voiceInputView:(DZVoiceInputView *)inputView didFinishRecord:(K12AudioRecorder *)recorder
 {
     [self.aioElement inputVoice:recorder.recorder.url];
+    self.toolbar.textInputView.textView.placeholderText = nil;
+
 }
 
 #pragma Actions
@@ -510,18 +520,27 @@ static NSString* const kEventNone = @"innone";
     if ([itemElement isKindOfClass:[DZAIOImageActionElement class]]) {
         DZAIOImageActionElement* imageAction = (DZAIOImageActionElement*)itemElement;
         [self.aioElement inputImage:imageAction.image];
+        self.toolbar.textInputView.textView.placeholderText = nil;
+
     } else if ([itemElement isKindOfClass:[DZEmojiItemElement class]]) {
         DZEmojiItemElement* emoji = (DZEmojiItemElement*)itemElement;
         NSString* text = _toolbar.textInputView.textView.text;
         text = text ? text :@"";
         _toolbar.textInputView.textView.text = [text stringByAppendingString:emoji.emoji];
         [self adjustToolbarHeight];
+        
     } else if ([itemElement isKindOfClass:[DZAIOMapActionElement class]]) {
         DZAIOMapActionElement* mapEle = (DZAIOMapActionElement*)itemElement;
         [self.aioElement inputLocation:mapEle.location];
+        self.toolbar.textInputView.textView.placeholderText = nil;
     }
     else {
         DDLogError(@"Get Data, but can not decode it");
     }
+}
+- (void) showTextInputWithPlaceholder:(NSString *)placeholder
+{
+    self.toolbar.textInputView.textView.placeholderText = placeholder;
+    [self sendTextEvent];
 }
 @end

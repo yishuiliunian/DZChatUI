@@ -1,26 +1,23 @@
 //
-//  DZAIOTableElement.h
+//  DZInputProtocol.h
 //  Pods
 //
-//  Created by stonedong on 16/5/4.
+//  Created by stonedong on 7/21/16.
 //
 //
 
-#import <ElementKit/ElementKit.h>
-#import "DZInputToolbar.h"
-@class YHLocation;
-
+#import <Foundation/Foundation.h>
 typedef  NS_ENUM(NSInteger, DZAIOToolbarType)
 {
     DZAIOToolbarTypeNormal,
-    DZAIOToolbarTypeNone
+    DZAIOToolbarTypeNone,
+    DZAIOToolbarTypeEmoji,
 };
-
 @class DZInputViewController;
-@interface DZAIOTableElement : EKAdjustTableElement
-@property (nonatomic, assign)DZAIOToolbarType  AIOToolbarType;
+@class YHLocation;
+@protocol DZInputProtocol <NSObject>
 @property (nonatomic, weak) DZInputViewController* inputViewController;
-- (void) handleLoadOldMessage;
+@property (nonatomic, assign)DZAIOToolbarType  AIOToolbarType;
 - (void) inputImage:(UIImage*)image;
 - (void) inputVoice:(NSURL*)url;
 - (void) inputText:(NSString*)text;
