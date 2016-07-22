@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface DZAlphaView : UIView
-
+@property (nonatomic, weak) UIView* alphaBackView;
 @end
