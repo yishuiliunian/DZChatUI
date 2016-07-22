@@ -67,6 +67,9 @@ static NSString* const kEventNone = @"innone";
     //
     CGFloat _currentAddtionHeight;
     //
+#ifdef DEBUG
+    NSTimer* _timer;
+#endif
 }
 @property (nonatomic, strong) EKTableViewController* rootViewController;
 @property (nonatomic, strong, readonly) EKTableElement<DZInputProtocol>* aioElement;
@@ -290,7 +293,7 @@ static NSString* const kEventNone = @"innone";
                     DZInputToolbarShowTypeEmoji |
                     DZInputToolbarShowTypeActions];
     }
-
+    _toolbar.voiceInputView.delegate = self;
     [self.view addSubview:_toolbar];
     //
     _contentView = _rootViewController.view;
@@ -389,6 +392,15 @@ static NSString* const kEventNone = @"innone";
     [super viewDidAppear:animated];
     [_element didBeginHandleResponser:self];
     [DZKeyboardShareManager addObserver:self];
+    
+#ifdef DEBUG
+//    _timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(sendTextDebug) userInfo:nil repeats:YES];
+#endif
+}
+
+- (void) sendTextDebug
+{
+    [self sendText:@"xxx"];
 }
 
 - (void) viewWillDisappear:(BOOL)animated
