@@ -47,7 +47,7 @@ static NSString* const kEventNone = @"innone";
 
 
 
-@interface DZInputViewController () <DZKeyboardChangedProtocol, UITextViewDelegate, DZVoiceInputViewDelegate, DZInputActionElementDelegate>
+@interface DZInputViewController () <DZKeyboardChangedProtocol, UITextViewDelegate, DZVoiceInputViewDelegate, DZInputActionElementDelegate, UIGestureRecognizerDelegate>
 {
     UISwipeGestureRecognizer* _swipeDown;
     //
@@ -78,7 +78,9 @@ static NSString* const kEventNone = @"innone";
 @property (nonatomic, strong) DZInputActionViewController* actionViewController;
 @property (nonatomic, assign) BOOL isShowAddtions;
 @property (nonatomic, strong) UISwipeGestureRecognizer* swipeDown;
+@property (nonatomic, strong) UITapGestureRecognizer* tapDown;
 @end
+
 
 
 @implementation DZInputViewController
@@ -153,6 +155,7 @@ static NSString* const kEventNone = @"innone";
 - (void) enablePullDown
 {
    _swipeDown.enabled = YES;
+    _tapDown.enabled = YES;
  
 }
 
@@ -160,6 +163,7 @@ static NSString* const kEventNone = @"innone";
 {
 //    self.pullDownView.userInteractionEnabled= NO;
     _swipeDown.enabled = NO;
+    _tapDown.enabled = NO;
  
 }
 - (void) setupMechine
@@ -317,14 +321,39 @@ static NSString* const kEventNone = @"innone";
     _swipeDown.delaysTouchesBegan = YES;
     _swipeDown.delegate = self;
     [self.view addGestureRecognizer:_swipeDown];
+    
+    _tapDown = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeDownGestrue:)];
+    _tapDown.numberOfTapsRequired = 1;
+    _tapDown.numberOfTouchesRequired = 1;
+    _tapDown.delaysTouchesBegan = YES;
+    _tapDown.delegate = self;
+    [self.view addGestureRecognizer:_tapDown];
+    
     [self disablePullDown];
 }
 
-- (void) handleSwipeDownGestrue:(UISwipeGestureRecognizer*)gs
+- (void) handleSwipeDownGestrue:(UIGestureRecognizer*)gs
 {
     if (gs.state == UIGestureRecognizerStateRecognized) {
         [_stateMachine fireEvent:kEventNone userInfo:nil error:nil];
     }
+}
+
+- (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return YES;
+}
+- (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if (gestureRecognizer == _tapDown) {
+        CGPoint point = [touch locationInView:self.view];
+        if (CGRectContainsPoint(self.rootViewController.view.frame, point)) {
+            return YES;
+        } else {
+            return NO;
+        }
+    }
+    return YES;
 }
 
 - (void) setupTextView
@@ -357,15 +386,6 @@ static NSString* const kEventNone = @"innone";
     return (EKTableElement<DZInputProtocol>*)self.rootViewController.tableElement;
 }
 
-- (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-    return YES;
-}
-
-- (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
-{
-    return YES;
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

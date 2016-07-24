@@ -12,14 +12,9 @@
 
 @implementation DZEmojiActionElement
 
-- (UICollectionViewLayout*) createCollectionLayout
+- (CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionViewFlowLayout* layout = [UICollectionViewFlowLayout new];
-    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    layout.itemSize = CGSizeMake(44, 44);
-    layout.minimumInteritemSpacing = 0;
-    layout.minimumInteritemSpacing = 0;
-    return layout;
+    return CGSizeMake(35, 35);
 }
 - (void) reloadData
 {

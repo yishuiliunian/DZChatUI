@@ -8,6 +8,7 @@
 
 #import "DZEmojiCollectionViewCell.h"
 #import "DZProgrameDefines.h"
+#import <DZGeometryTools.h>
 @implementation DZEmojiCollectionViewCell
 - (instancetype) initWithFrame:(CGRect)frame
 {
@@ -21,6 +22,7 @@
 - (void) layoutSubviews
 {
     [super layoutSubviews];
-    _emojiImageView.frame = self.contentView.bounds;
+    CGSize imageSize = {25,25};
+    _emojiImageView.frame = CGRectCenter(self.contentView.bounds, imageSize);
 }
 @end
