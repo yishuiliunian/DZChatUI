@@ -8,7 +8,6 @@
 
 #import "DZAIOImageActionElement.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#import "DZImageSlimer.h"
 @interface UIResponder (FindNavigation)
 @property (nonatomic, strong, readonly) UINavigationController* hostNavigationController;
 @end
@@ -153,8 +152,6 @@
     UIImage* image = info[UIImagePickerControllerOriginalImage];
     [picker dismissViewControllerAnimated:YES completion:nil];
     _image = [self fixOrientation:image];
-
-    _image = [DZImageSlimer slimImage:_image aimDataLength:400*1024];
     [self.eventBus performSelector:@selector(imageElement:getImage:) withObject:self withObject:_image];
 }
 @end
