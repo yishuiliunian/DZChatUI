@@ -11,5 +11,6 @@
 @interface DZEmojiMapper : NSObject
 @property (nonatomic, strong, readonly) NSDictionary* eomjiMapper;
 @property (nonatomic, strong, readonly) YYTextSimpleEmoticonParser* textEmojiParser;
+@property (nonatomic, strong, readonly) NSArray* allEmoji;
 + (DZEmojiMapper*)mapper;
 @end

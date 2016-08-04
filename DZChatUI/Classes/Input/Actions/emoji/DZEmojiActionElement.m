@@ -20,7 +20,12 @@
 {
     [_dataController clean];
     NSDictionary* mapper =[DZEmojiMapper mapper].eomjiMapper;
-    for (NSString* key in mapper.allKeys) {
+    NSArray* allKeys = mapper.allKeys;
+    allKeys = [allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        return [obj1 compare:obj2];
+    }];
+
+    for (NSString* key in allKeys) {
         DZEmojiItemElement* item = [[DZEmojiItemElement alloc] initWithEmoji:key image:mapper[key]];
         [_dataController addObject:item];
     }

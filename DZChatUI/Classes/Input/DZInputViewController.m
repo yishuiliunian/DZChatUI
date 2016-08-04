@@ -345,7 +345,7 @@ static NSString* const kEventNone = @"innone";
 }
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    if (gestureRecognizer == _tapDown) {
+    if (gestureRecognizer == _tapDown || gestureRecognizer == _swipeDown) {
         CGPoint point = [touch locationInView:self.view];
         if (CGRectContainsPoint(self.rootViewController.view.frame, point)) {
             return YES;
