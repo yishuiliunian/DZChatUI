@@ -15,12 +15,15 @@
 {
     UICollectionViewFlowLayout* layout =  [UICollectionViewFlowLayout new];
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    layout.minimumInteritemSpacing = 10;
+    layout.minimumLineSpacing = 5;
     return layout;
 }
 - (CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(35, 35);
+    return CGSizeMake(40, 35);
 }
+
 - (void) reloadData
 {
     [_dataController clean];
