@@ -11,9 +11,7 @@
 @class DZInputActionElement;
 @class EKElement;
 @protocol DZInputActionElementDelegate <NSObject>
-
 - (void) actionElement:(DZInputActionElement*)element didSelectAction:(EKElement*)itemElement;
-
 @end
 @interface DZInputActionElement : EKCollectionElement
 @property (nonatomic, weak) NSObject<DZInputActionElementDelegate>* delegate;

@@ -11,12 +11,7 @@
 @implementation DZInputActionElement
 
 
-- (UICollectionViewLayout*) createCollectionLayout
-{
-    UICollectionViewFlowLayout* layout =  [UICollectionViewFlowLayout new];
-    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    return layout;
-}
+
 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {

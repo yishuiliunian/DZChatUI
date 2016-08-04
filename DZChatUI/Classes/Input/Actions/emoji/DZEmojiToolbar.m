@@ -10,10 +10,11 @@
 #import "DZProgrameDefines.h"
 #import "DZEmojiGroupItemCell.h"
 #import "DZGeometryTools.h"
-
+#import "DZChatTools.h"
 @interface DZEmojiToolbar () <UICollectionViewDataSource>
 {
     UICollectionView* _collectionView;
+    UIImageView* _backgroundImageView;
 }
 @end
 
@@ -25,6 +26,8 @@
     if (!self) {
         return self;
     }
+    INIT_SELF_SUBVIEW_UIImageView(_backgroundImageView);
+    _backgroundImageView.image = LoadPodImage(InputToolBar);
     INIT_SUBVIEW_UIButton(self, _rightButton);
     UICollectionViewFlowLayout* flowLayout = [UICollectionViewFlowLayout new];
     flowLayout.itemSize = CGSizeMake(44, 44);
@@ -33,14 +36,22 @@
     _collectionView  = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
     _collectionView.delegate = self;
     [_collectionView registerClass:[DZEmojiGroupItemCell class] forCellWithReuseIdentifier:@"DZEmojiGroupItemCell"];
+    [_rightButton setTitle:@"发送" forState:UIControlStateNormal];
+    [_rightButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     return self;
 }
 
 - (void) layoutSubviews
 {
     [super layoutSubviews];
+    if (CGRectIsEmpty(self.bounds)) {
+        _rightButton.frame = CGRectZero;
+        _backgroundImageView.frame = CGRectZero;
+        _collectionView.frame = CGRectZero;
+        return;
+    }
     CGRect contentRect = CGRectCenterSubSize(self.bounds, CGSizeMake(20, 10));
-    CGSize buttonSize = {50,30};
+    CGSize buttonSize = {50,CGRectGetHeight(self.bounds) - 10};
     
     CGRect btnRect;
     CGRect collectionRect;
@@ -50,6 +61,7 @@
     
     _rightButton.frame = btnRect;
     _collectionView.frame = collectionRect;
+    _backgroundImageView.frame = self.bounds;
     
 }
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView

@@ -24,6 +24,7 @@
 #import "DZAIOImageActionElement.h"
 #import "DZAIOMapActionElement.h"
 #import "DZProgrameDefines.h"
+#import "DZEmojiContainerViewController.h"
 
 static CGFloat kDZAdditionHeight = 271;
 
@@ -59,7 +60,7 @@ static NSString* const kEventNone = @"innone";
     //
     BOOL _isFirstLayout;
     //
-    DZInputActionViewController* _emojiViewController;
+    DZEmojiContainerViewController* _emojiViewController;
     DZInputActionViewController* _actionViewController;
     BOOL _isShowAddtions;
     //
@@ -74,7 +75,7 @@ static NSString* const kEventNone = @"innone";
 @property (nonatomic, strong) EKTableViewController* rootViewController;
 @property (nonatomic, strong, readonly) EKTableElement<DZInputProtocol>* aioElement;
 @property (nonatomic, strong) DZInputToolbar* toolbar;
-@property (nonatomic, strong) DZInputActionViewController* emojiViewController;
+@property (nonatomic, strong) DZEmojiContainerViewController* emojiViewController;
 @property (nonatomic, strong) DZInputActionViewController* actionViewController;
 @property (nonatomic, assign) BOOL isShowAddtions;
 @property (nonatomic, strong) UISwipeGestureRecognizer* swipeDown;
@@ -196,7 +197,6 @@ static NSString* const kEventNone = @"innone";
         [wSelf.view bringSubviewToFront:wSelf.emojiViewController.view];
         wSelf.isShowAddtions = YES;
         [wSelf enablePullDown];
-        [wSelf.emojiViewController.collectionView reloadData];
         
     }];
     [emojiState setDidExitStateBlock:^(TKState *state, TKTransition *transition) {
@@ -304,9 +304,8 @@ static NSString* const kEventNone = @"innone";
     [self.view addSubview:_contentView];
     //
     
-    DZEmojiActionElement* emojiEle = [DZEmojiActionElement new];
-    emojiEle.delegate = self;
-    _emojiViewController = [[DZInputActionViewController alloc] initWithElement:emojiEle];
+    _emojiViewController = [DZEmojiContainerViewController new];
+    _emojiViewController.emojiElement.delegate = self;
     DZAIOActionElement* actionsEle = [DZAIOActionElement new];
     actionsEle.delegate = self;
     _actionViewController = [[DZInputActionViewController alloc] initWithElement:actionsEle];
@@ -496,12 +495,21 @@ static NSString* const kEventNone = @"innone";
     }];
 }
 
+- (void) actualSendText
+{
+    UITextView* textView = _toolbar.textInputView.textView;
+    NSString* text = textView.text;
+    if (text.length == 0) {
+        return;
+    }
+    [self sendText:textView.text];
+    textView.text = @"";
+    [self adjustToolbarHeight];
+}
 - (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     if ([text isEqualToString:@"\n"]) {
-        [self sendText:textView.text];
-        textView.text = @"";
-        [self adjustToolbarHeight];
+        [self actualSendText];
         return NO;
     } else {
         return YES;
@@ -558,8 +566,13 @@ static NSString* const kEventNone = @"innone";
         DZEmojiItemElement* emoji = (DZEmojiItemElement*)itemElement;
         NSString* text = _toolbar.textInputView.textView.text;
         text = text ? text :@"";
-        _toolbar.textInputView.textView.text = [text stringByAppendingString:emoji.emoji];
-        [self adjustToolbarHeight];
+        if ([emoji.emoji isEqualToString:kDZEmojiSendKey]) {
+            [self actualSendText];
+        } else {
+            _toolbar.textInputView.textView.text = [text stringByAppendingString:emoji.emoji];
+            [self adjustToolbarHeight];
+        }
+        
         
     } else if ([itemElement isKindOfClass:[DZAIOMapActionElement class]]) {
         DZAIOMapActionElement* mapEle = (DZAIOMapActionElement*)itemElement;
