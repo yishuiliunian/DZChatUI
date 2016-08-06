@@ -74,7 +74,7 @@ static NSString* const kEventNone = @"innone";
 }
 @property (nonatomic, strong) EKTableViewController* rootViewController;
 @property (nonatomic, strong, readonly) EKTableElement<DZInputProtocol>* aioElement;
-@property (nonatomic, strong) DZInputToolbar* toolbar;
+
 @property (nonatomic, strong) DZEmojiContainerViewController* emojiViewController;
 @property (nonatomic, strong) DZInputActionViewController* actionViewController;
 @property (nonatomic, assign) BOOL isShowAddtions;

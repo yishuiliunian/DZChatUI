@@ -9,7 +9,7 @@
 #import <DZKeyboardAdjust/DZKeyboardAdjust.h>
 #import <ElementKit/ElementKit.h>
 #import "DZInputProtocol.h"
-
+#import "DZInputToolbar.h"
 
 @class DZAIOViewController;
 @interface DZInputViewController : UIViewController
@@ -17,6 +17,7 @@
     @protected
     EKElement* _element;
 }
+@property (nonatomic, strong, readonly) DZInputToolbar* toolbar;
 @property (nonatomic, strong, readonly) UIImageView* backgroundImageView;
 /**
  *  0 向下  1向上
