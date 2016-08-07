@@ -31,6 +31,7 @@
     _boardImageView.layer.cornerRadius = 8;
     _boardImageView.layer.borderColor = [UIColor lightGrayColor].CGColor;
     _boardImageView.layer.borderWidth = 1;
+    _textLabel.font = [UIFont systemFontOfSize:15];
     return self;
 }
 
@@ -38,7 +39,8 @@
 {
     [super layoutSubviews];
     
-    CGSize imageSize = {30, 3/4.0*30};
+    
+    CGSize imageSize = {28, 3/4.0*28};
     CGRect contentRect = self.contentView.bounds;
     contentRect = CGRectCenterSubSize(contentRect, CGSizeMake(10, 10));
     

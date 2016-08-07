@@ -45,9 +45,16 @@
     
 }
 
+- (CGFloat) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+    return 10;
+}
 - (CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(80, 100);
+    CGFloat width = CGRectGetWidth([UIScreen mainScreen].bounds);
+    width = (width - 11*5)/4;
+    CGFloat height = width* 5/4;
+    return CGSizeMake(width, height);
 }
 
 
