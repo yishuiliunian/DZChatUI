@@ -14,7 +14,7 @@
 - (UICollectionViewLayout*) createCollectionLayout
 {
     UICollectionViewFlowLayout* layout =  [UICollectionViewFlowLayout new];
-    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     layout.minimumInteritemSpacing = 10;
     layout.minimumLineSpacing = 5;
     return layout;
