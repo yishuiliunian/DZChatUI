@@ -426,13 +426,15 @@ static NSString* const kEventNone = @"innone";
 {
     [super viewWillDisappear:animated];
     [_element willBeginHandleResponser:self];
+    [DZKeyboardShareManager removeObserver:self];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
     [_element didRegsinHandleResponser:self];
-    [DZKeyboardShareManager removeObserver:self];
+
+    [_stateMachine fireEvent:kEventNone userInfo:nil error:nil];
 }
 
 
