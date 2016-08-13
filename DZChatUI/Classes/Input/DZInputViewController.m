@@ -25,6 +25,7 @@
 #import "DZAIOMapActionElement.h"
 #import "DZProgrameDefines.h"
 #import "DZEmojiContainerViewController.h"
+#import "DZInputNoticeView.h"
 
 static CGFloat kDZAdditionHeight = 271;
 
@@ -81,6 +82,7 @@ static NSString* const kEventNone = @"innone";
 @property (nonatomic, assign) BOOL isShowAddtions;
 @property (nonatomic, strong) UISwipeGestureRecognizer* swipeDown;
 @property (nonatomic, strong) UITapGestureRecognizer* tapDown;
+
 @end
 
 
@@ -459,6 +461,15 @@ static NSString* const kEventNone = @"innone";
     _contentView.frame = contentRect;
     _emojiViewController.view.frame = addtionRect;
     _actionViewController.view.frame = addtionRect;
+    if (_inputNoticeView) {
+        CGSize size = _inputNoticeView.contentSize;
+        CGRect rect = CGRectZero;
+        rect.origin.y = CGRectGetMinY(_toolbar.frame) - size.height - 20;
+        rect.origin.x = CGRectGetMaxX(_toolbar.frame) - size.width - 10;
+        rect.size = size;
+        _inputNoticeView.frame= rect;
+        [self.view bringSubviewToFront:_inputNoticeView];
+    }
 }
 
 
@@ -589,5 +600,23 @@ static NSString* const kEventNone = @"innone";
 {
     self.toolbar.textInputView.textView.placeholderText = placeholder;
     [self sendTextEvent];
+}
+
+
+#pragma Input Notice
+
+- (void) setInputNoticeView:(DZInputNoticeView *)inputNoticeView
+{
+    if (_inputNoticeView != inputNoticeView) {
+        [_inputNoticeView removeFromSuperview];
+        _inputNoticeView = inputNoticeView;
+        [self.view addSubview:_inputNoticeView];
+    }
+}
+
+- (void) showNoticeView:(DZInputNoticeView*)inputNoticeView{
+
+    self.inputNoticeView =  inputNoticeView;
+    [self layoutWithAddtionHeight:_currentAddtionHeight];
 }
 @end

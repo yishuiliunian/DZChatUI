@@ -13,5 +13,7 @@
 #import "DZInputToolbar.h"
 #import "DZInputViewController.h"
 #import "DZInputProtocol.h"
+#import "DZInputNoticeView.h"
+#import "DZInputTextNoticeView.h"
 
 #endif /* DZChatUI_h */

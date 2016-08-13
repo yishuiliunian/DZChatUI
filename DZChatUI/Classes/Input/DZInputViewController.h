@@ -12,11 +12,13 @@
 #import "DZInputToolbar.h"
 
 @class DZAIOViewController;
+@class DZInputNoticeView;
 @interface DZInputViewController : UIViewController
 {
     @protected
     EKElement* _element;
 }
+@property (nonatomic, strong) DZInputNoticeView * inputNoticeView;
 @property (nonatomic, strong, readonly) DZInputToolbar* toolbar;
 @property (nonatomic, strong, readonly) UIImageView* backgroundImageView;
 /**
@@ -26,6 +28,8 @@
 - (instancetype) initWithElement:(EKElement*)ele contentViewController:(EKTableViewController*)viewController;
 
 - (void) showTextInputWithPlaceholder:(NSString*)placeholder;
+
+- (void) showNoticeView:(DZInputNoticeView*)inputNoticeView;
 @end
 
 
