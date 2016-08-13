@@ -67,6 +67,7 @@ static NSString* const kEventNone = @"innone";
     TKStateMachine* _stateMachine;
     //
     CGFloat _currentAddtionHeight;
+    BOOL _inputFirestAppear;
     //
 #ifdef DEBUG
     NSTimer* _timer;
@@ -267,6 +268,7 @@ static NSString* const kEventNone = @"innone";
     _isShowAddtions = NO;
     self.aioElement.inputViewController  = self;
     self.hidesBottomBarWhenPushed = YES;
+    _inputFirestAppear = YES;
     return self;
 }
 
@@ -411,7 +413,6 @@ static NSString* const kEventNone = @"innone";
     [super viewDidAppear:animated];
     [_element didBeginHandleResponser:self];
     [DZKeyboardShareManager addObserver:self];
-    
 #ifdef DEBUG
 //    _timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(sendTextDebug) userInfo:nil repeats:YES];
 #endif
@@ -433,7 +434,6 @@ static NSString* const kEventNone = @"innone";
 {
     [super viewDidDisappear:animated];
     [_element didRegsinHandleResponser:self];
-
     [_stateMachine fireEvent:kEventNone userInfo:nil error:nil];
 }
 
