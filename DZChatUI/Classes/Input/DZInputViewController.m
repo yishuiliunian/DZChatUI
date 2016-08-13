@@ -418,6 +418,9 @@ static NSString* const kEventNone = @"innone";
 #ifdef DEBUG
 //    _timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(sendTextDebug) userInfo:nil repeats:YES];
 #endif
+    if (ABS(_currentAddtionHeight - 0) < 1 ) {
+        [self layoutWithAddtionHeight:_currentAddtionHeight];
+    }
 }
 
 - (void) sendTextDebug
