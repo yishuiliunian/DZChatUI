@@ -42,7 +42,7 @@
     _textLabel.layer.borderColor = [UIColor lightGrayColor].CGColor;
     _textLabel.layer.borderWidth = 1;
     _textLabel.layer.masksToBounds = YES;
-    _maxRecordTime = 30;
+    _maxRecordTime = 60;
     return self;
 }
 
