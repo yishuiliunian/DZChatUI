@@ -270,7 +270,6 @@ static NSString* const kEventNone = @"innone";
     _element = ele;
     _isFirstLayout = YES;
     _isShowAddtions = NO;
-    MRExtendInstanceLogicWithKey(self.aioElement, @"__INPUT_LOGIC", @[[DZInputProtocolExtendPropertyLogic class]]);
     self.aioElement.inputViewController  = self;
     self.hidesBottomBarWhenPushed = YES;
     _inputFirestAppear = YES;
@@ -632,35 +631,4 @@ static NSString* const kEventNone = @"innone";
     self.inputNoticeView =  inputNoticeView;
     [self layoutWithAddtionHeight:_currentAddtionHeight];
 }
-@end
-
-
-static void* kDZInputPropertyInputViewController = &kDZInputPropertyInputViewController;
-static void* kDZInputPropertyAIOType = &kDZInputPropertyAIOType;
-@implementation DZInputProtocolExtendPropertyLogic
-
-- (void) setAIOToolbarType:(DZAIOToolbarType)AIOToolbarType
-{
-    objc_setAssociatedObject(self, kDZInputPropertyAIOType, @(AIOToolbarType), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (DZAIOToolbarType) AIOToolbarType
-{
-    NSNumber* number = objc_getAssociatedObject(self, kDZInputPropertyAIOType);
-    if (!number) {
-        return DZAIOToolbarTypeNormal;
-    }
-    return [number intValue];
-}
-
-- (void) setInputViewController:(DZInputViewController *)inputViewController
-{
-    [self ekSetWeakValue:inputViewController forKey:kDZInputPropertyInputViewController];
-}
-
-- (DZInputViewController*) inputViewController
-{
-    return [self ekGetWeakValueForKey:kDZInputPropertyInputViewController];
-}
-
 @end
