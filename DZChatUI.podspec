@@ -56,4 +56,5 @@ TODO: Add long description of the pod here.
   s.dependency 'YHMapLocation'
   s.dependency 'DZAlertPool'
   s.dependency 'YYText'
+  s.dependency 'MRLogicInjection'
 end

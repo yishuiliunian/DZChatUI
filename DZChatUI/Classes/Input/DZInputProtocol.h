@@ -16,9 +16,10 @@ typedef  NS_ENUM(NSInteger, DZAIOToolbarType)
 @class DZInputViewController;
 @class YHLocation;
 @protocol DZInputProtocol <NSObject>
-@optional
+/**
+ *  下面两个属性方法不用去实现，核心机制会保证这个方法存在
+ */
 @property (nonatomic, weak) DZInputViewController* inputViewController;
-@optional
 @property (nonatomic, assign)DZAIOToolbarType  AIOToolbarType;
 @optional
 - (void) inputImage:(UIImage*)image;
@@ -31,4 +32,10 @@ typedef  NS_ENUM(NSInteger, DZAIOToolbarType)
 @optional
 
 - (void) inputLocation:(YHLocation*)location;
+@end
+
+
+@interface DZInputProtocolExtendPropertyLogic : NSObject
+@property (nonatomic, weak) DZInputViewController* inputViewController;
+@property (nonatomic, assign)DZAIOToolbarType  AIOToolbarType;
 @end

@@ -26,7 +26,9 @@
 #import "DZProgrameDefines.h"
 #import "DZEmojiContainerViewController.h"
 #import "DZInputNoticeView.h"
-
+#import <objc/runtime.h>
+#import "EKWeakContanier.h"
+#import <MRLogicInjection/MRLogicInjection.h>
 static CGFloat kDZAdditionHeight = 271;
 
 
@@ -268,6 +270,7 @@ static NSString* const kEventNone = @"innone";
     _element = ele;
     _isFirstLayout = YES;
     _isShowAddtions = NO;
+    MRExtendInstanceLogicWithKey(self.aioElement, @"__INPUT_LOGIC", @[[DZInputProtocolExtendPropertyLogic class]]);
     self.aioElement.inputViewController  = self;
     self.hidesBottomBarWhenPushed = YES;
     _inputFirestAppear = YES;
@@ -505,7 +508,6 @@ static NSString* const kEventNone = @"innone";
 
 - (void) textViewDidChange:(UITextView *)textView
 {
-    NSLog(@"%f",_toolbar.textInputView.aimHeight);
     [UIView animateWithDuration:0.25 animations:^{
         [self layoutWithAddtionHeight:_currentAddtionHeight];
     }];
@@ -534,7 +536,9 @@ static NSString* const kEventNone = @"innone";
 
 - (void) sendText:(NSString*)text
 {
-    [self.aioElement inputText:text];
+    if ([self.aioElement respondsToSelector:@selector(inputText:)]) {
+        [self.aioElement inputText:text];
+    }
     self.toolbar.textInputView.textView.placeholderText = nil;
 
 }
@@ -565,7 +569,9 @@ static NSString* const kEventNone = @"innone";
 
 - (void) voiceInputView:(DZVoiceInputView *)inputView didFinishRecord:(K12AudioRecorder *)recorder
 {
-    [self.aioElement inputVoice:recorder.recorder.url];
+    if ([self.aioElement respondsToSelector:@selector(inputVoice:)]) {
+        [self.aioElement inputVoice:recorder.recorder.url];
+    }
     self.toolbar.textInputView.textView.placeholderText = nil;
 
 }
@@ -575,7 +581,9 @@ static NSString* const kEventNone = @"innone";
 {
     if ([itemElement isKindOfClass:[DZAIOImageActionElement class]]) {
         DZAIOImageActionElement* imageAction = (DZAIOImageActionElement*)itemElement;
-        [self.aioElement inputImage:imageAction.image];
+        if ([self.aioElement respondsToSelector:@selector(inputImage:)]) {
+            [self.aioElement inputImage:imageAction.image];
+        }
         self.toolbar.textInputView.textView.placeholderText = nil;
 
     } else if ([itemElement isKindOfClass:[DZEmojiItemElement class]]) {
@@ -592,7 +600,9 @@ static NSString* const kEventNone = @"innone";
         
     } else if ([itemElement isKindOfClass:[DZAIOMapActionElement class]]) {
         DZAIOMapActionElement* mapEle = (DZAIOMapActionElement*)itemElement;
-        [self.aioElement inputLocation:mapEle.location];
+        if ([self.aioElement respondsToSelector:@selector(inputLocation:)]) {
+            [self.aioElement inputLocation:mapEle.location];
+        }
         self.toolbar.textInputView.textView.placeholderText = nil;
     }
     else {
@@ -622,4 +632,35 @@ static NSString* const kEventNone = @"innone";
     self.inputNoticeView =  inputNoticeView;
     [self layoutWithAddtionHeight:_currentAddtionHeight];
 }
+@end
+
+
+static void* kDZInputPropertyInputViewController = &kDZInputPropertyInputViewController;
+static void* kDZInputPropertyAIOType = &kDZInputPropertyAIOType;
+@implementation DZInputProtocolExtendPropertyLogic
+
+- (void) setAIOToolbarType:(DZAIOToolbarType)AIOToolbarType
+{
+    objc_setAssociatedObject(self, kDZInputPropertyAIOType, @(AIOToolbarType), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (DZAIOToolbarType) AIOToolbarType
+{
+    NSNumber* number = objc_getAssociatedObject(self, kDZInputPropertyAIOType);
+    if (!number) {
+        return DZAIOToolbarTypeNormal;
+    }
+    return [number intValue];
+}
+
+- (void) setInputViewController:(DZInputViewController *)inputViewController
+{
+    [self ekSetWeakValue:inputViewController forKey:kDZInputPropertyInputViewController];
+}
+
+- (DZInputViewController*) inputViewController
+{
+    return [self ekGetWeakValueForKey:kDZInputPropertyInputViewController];
+}
+
 @end
