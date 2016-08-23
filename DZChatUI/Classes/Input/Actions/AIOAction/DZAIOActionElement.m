@@ -13,27 +13,55 @@
 #import "DZAIOMapActionElement.h"
 #define LoadPodImage(name)   [UIImage imageNamed:@"DZChatUI.bundle/"#name inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil]
 
+int const kDZPerRowCount = 4;
+
 
 @interface DZAIOActionElement () <DZAIOImageActionEvents, DZAIOMapActionEvents>
 {
     DZAIOImageActionElement* _imageItem;
     DZAIOImageActionElement* _camertaItem;
     DZAIOMapActionElement* _mapitem;
+    CGSize _itemSize;
+    NSArray* _actionItems;
 }
 @end
 @implementation DZAIOActionElement
 
-- (void) reloadData
+
+- (instancetype) init
 {
+    self = [super init];
+    if (!self) {
+        return self;
+    }
+    CGFloat width = CGRectGetWidth([UIScreen mainScreen].bounds);
+    width = (width - 11*5.f)/kDZPerRowCount;
+    CGFloat height = width* 5.0f/kDZPerRowCount;
+    _itemSize = CGSizeMake(width, height);
+    
+    
     _imageItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(actiion_image) title:@"照片"];
     _camertaItem = [[DZAIOImageActionElement alloc] initWithTitleImage:LoadPodImage(actiion_camera) title:@"相机"];
-    _mapitem  = [[DZAIOMapActionElement alloc] initWithTitleImage:LoadPodImage(action_map) title:@"位置"];
     _camertaItem.sourceType = UIImagePickerControllerSourceTypeCamera;
-    [_dataController clean];
-    [_dataController addObject:_imageItem];
-    [_dataController addObject:_camertaItem];
-    [_dataController addObject:_mapitem];
+    _mapitem  = [[DZAIOMapActionElement alloc] initWithTitleImage:LoadPodImage(action_map) title:@"位置"];
+    NSMutableArray* items = [NSMutableArray new];
+    [items addObject:_imageItem];
+    [items addObject:_camertaItem];
+    [items addObject:_mapitem];
+    _actionItems = items;
     
+    return self;
+}
+
+- (CGFloat) preferHeight
+{
+    int row = (_actionItems.count)/kDZPerRowCount + 1;
+    return _itemSize.height * row + _actionItems.count/kDZPerRowCount*10.0f;
+}
+
+- (void) reloadData
+{
+    [_dataController replaceObjects:_actionItems atSection:0];
     [super reloadData];
 }
 
@@ -42,19 +70,15 @@
     
     DZAIOActionItemElement* ele = [_dataController objectAtIndexPath:EKIndexPathFromNS(indexPath)];
     [ele handleActionInViewController:self.uiEventPool];
-    
 }
 
 - (CGFloat) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
-    return 10;
+    return 10.0f;
 }
 - (CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat width = CGRectGetWidth([UIScreen mainScreen].bounds);
-    width = (width - 11*5)/4;
-    CGFloat height = width* 5/4;
-    return CGSizeMake(width, height);
+    return _itemSize;
 }
 
 

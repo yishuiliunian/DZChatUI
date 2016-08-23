@@ -72,6 +72,7 @@ static NSString* const kEventNone = @"innone";
     CGFloat _currentAddtionHeight;
     BOOL _inputFirestAppear;
     //
+    DZAIOActionElement* _actionsEle;
 #ifdef DEBUG
     NSTimer* _timer;
 #endif
@@ -214,7 +215,7 @@ static NSString* const kEventNone = @"innone";
     [actionState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
         [wSelf.toolbar actionButtonShowNormal:NO];
         [wSelf actionButtonToggleAction];
-        [wSelf layoutWithShowAddtion];
+        [wSelf layoutWithActionShow];
         [wSelf.view bringSubviewToFront:wSelf.actionViewController.view];
         wSelf.isShowAddtions = YES;
         [wSelf enablePullDown];
@@ -312,9 +313,9 @@ static NSString* const kEventNone = @"innone";
     
     _emojiViewController = [DZEmojiContainerViewController new];
     _emojiViewController.emojiElement.delegate = self;
-    DZAIOActionElement* actionsEle = [DZAIOActionElement new];
-    actionsEle.delegate = self;
-    _actionViewController = [[DZInputActionViewController alloc] initWithElement:actionsEle];
+    _actionsEle = [DZAIOActionElement new];
+    _actionsEle.delegate = self;
+    _actionViewController = [[DZInputActionViewController alloc] initWithElement:_actionsEle];
 
     [self appendChildViewController:_emojiViewController];
     [self appenChildVC:_actionViewController];
@@ -551,6 +552,16 @@ static NSString* const kEventNone = @"innone";
 - (void) layoutWithShowAddtion
 {
     [self layoutWithAddtionHeight:kDZAdditionHeight];
+    if (self.scrollDirection == 0) {
+        [self.rootViewController.tableElement scrollToEnd];
+    } else {
+        [self.rootViewController.tableView scrollsToTop];
+    }
+}
+
+- (void) layoutWithActionShow
+{
+    [self layoutWithAddtionHeight:_actionsEle.preferHeight];
     if (self.scrollDirection == 0) {
         [self.rootViewController.tableElement scrollToEnd];
     } else {

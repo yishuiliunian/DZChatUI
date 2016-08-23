@@ -14,5 +14,6 @@
 - (void) actionElement:(DZInputActionElement*)element didSelectAction:(EKElement*)itemElement;
 @end
 @interface DZInputActionElement : EKCollectionElement
+@property (nonatomic, assign, readonly) CGFloat preferHeight;
 @property (nonatomic, weak) NSObject<DZInputActionElementDelegate>* delegate;
 @end

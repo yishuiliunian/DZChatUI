@@ -68,7 +68,7 @@ NSString* const kDZEmojiSendKey = @"发送Emoji";
     [super viewWillLayoutSubviews];
     CGRect emojiR;
     CGRect toolbarR;
-    CGRectDivide(self.view.bounds, &toolbarR, &emojiR, 40, CGRectMaxYEdge);
+    CGRectDivide(self.view.bounds, &toolbarR, &emojiR, 40.0f, CGRectMaxYEdge);
     self.emojiViewController.view.frame = emojiR;
     self.toolbar.frame = toolbarR;
 }

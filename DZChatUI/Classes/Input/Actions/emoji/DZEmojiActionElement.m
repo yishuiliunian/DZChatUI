@@ -21,7 +21,7 @@
 }
 - (CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(40, 35);
+    return CGSizeMake(40.0f, 35.0f);
 }
 
 - (void) reloadData

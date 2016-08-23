@@ -9,10 +9,6 @@
 #import "DZInputActionElement.h"
 
 @implementation DZInputActionElement
-
-
-
-
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     EKElement* ele = [_dataController objectAtIndexPath:EKIndexPathFromNS(indexPath)];
@@ -20,6 +16,4 @@
         [self.delegate actionElement:self didSelectAction:ele];
     }
 }
-
-
 @end

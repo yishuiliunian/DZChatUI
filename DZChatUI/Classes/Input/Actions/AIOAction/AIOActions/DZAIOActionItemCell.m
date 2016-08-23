@@ -40,7 +40,7 @@
     [super layoutSubviews];
     
     
-    CGSize imageSize = {28, 3/4.0*28};
+    CGSize imageSize = {28, 28};
     CGRect contentRect = self.contentView.bounds;
     contentRect = CGRectCenterSubSize(contentRect, CGSizeMake(10, 10));
     
