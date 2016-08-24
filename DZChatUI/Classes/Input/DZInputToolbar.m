@@ -154,7 +154,7 @@ CGFloat const kActionHeight = 271;
     }
     
 
-    CGFloat space = 10;
+    CGFloat space = 2;
     CGRect contentRect = self.bounds;
     contentRect = CGRectCenterSubSize(contentRect, CGSizeMake(10, 10));
     CGRect voiceRect;
