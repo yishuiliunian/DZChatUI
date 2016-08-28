@@ -29,6 +29,7 @@
 #import <objc/runtime.h>
 #import "EKWeakContanier.h"
 #import <MRLogicInjection/MRLogicInjection.h>
+#import <DZGeometryTools/DZGeometryTools.h>
 static CGFloat kDZAdditionHeight = 271;
 
 
@@ -400,6 +401,7 @@ static NSString* const kEventNone = @"innone";
 - (void) viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
+    CGPrintKeyRect(@"Input Rect", self.view.frame);
     if (_isFirstLayout) {
         _isFirstLayout =!_isFirstLayout;
         [self layoutWithHiddenAdditon];
