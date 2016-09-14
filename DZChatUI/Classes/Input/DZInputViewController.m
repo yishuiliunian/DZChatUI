@@ -401,7 +401,6 @@ static NSString* const kEventNone = @"innone";
 - (void) viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    CGPrintKeyRect(@"Input Rect", self.view.frame);
     if (_isFirstLayout) {
         _isFirstLayout =!_isFirstLayout;
         [self layoutWithHiddenAdditon];
