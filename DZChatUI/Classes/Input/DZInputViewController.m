@@ -275,6 +275,7 @@ static NSString* const kEventNone = @"innone";
     self.aioElement.inputViewController  = self;
     self.hidesBottomBarWhenPushed = YES;
     _inputFirestAppear = YES;
+    _currentAddtionHeight = CGFLOAT_MAX;
     return self;
 }
 
@@ -449,6 +450,12 @@ static NSString* const kEventNone = @"innone";
 
 - (void) layoutWithAddtionHeight:(CGFloat)height
 {
+    if (ABS(_currentAddtionHeight-height) < 1) {
+        if ((ABS(CGRectGetHeight(self.view.bounds) - CGRectGetHeight(_contentView.bounds)) - height) < 1) {
+            return;
+        }
+    }
+
     _currentAddtionHeight = height;
     CGRect addtionRect;
     CGRect toolbarRect;
