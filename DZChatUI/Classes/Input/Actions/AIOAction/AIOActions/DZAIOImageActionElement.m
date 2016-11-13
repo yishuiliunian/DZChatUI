@@ -32,7 +32,7 @@
                     return vc.parentViewController.hostNavigationController;
                 }
             } else {
-                return vc.view.superview.hostNavigationController;
+                return nil;
             }
         }
     } else if ([self isKindOfClass:[UIView class]]) {
@@ -61,7 +61,7 @@
     UIImagePickerController* pickerVC = [[UIImagePickerController alloc]init];
     pickerVC.delegate = self;
     pickerVC.sourceType = self.sourceType;
-    [self.hostViewController.hostNavigationController presentViewController:pickerVC animated:YES completion:^{
+    [self.hostViewController presentViewController:pickerVC animated:YES completion:^{
     }];
 }
 
