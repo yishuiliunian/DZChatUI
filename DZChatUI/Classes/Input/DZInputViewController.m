@@ -405,6 +405,8 @@ static NSString* const kEventNone = @"innone";
     if (_isFirstLayout) {
         _isFirstLayout =!_isFirstLayout;
         [self layoutWithHiddenAdditon];
+    } else {
+        [self layoutWithAddtionHeight:_currentAddtionHeight];
     }
     _backgroundImageView.frame =self.view.bounds;
 }
