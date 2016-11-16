@@ -406,7 +406,7 @@ static NSString* const kEventNone = @"innone";
         _isFirstLayout =!_isFirstLayout;
         [self layoutWithHiddenAdditon];
     } else {
-        [self layoutWithAddtionHeight:_currentAddtionHeight];
+        [self layoutWithAddtionHeight:_currentAddtionHeight animated:NO];
     }
     _backgroundImageView.frame =self.view.bounds;
 }
@@ -426,7 +426,7 @@ static NSString* const kEventNone = @"innone";
 //    _timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(sendTextDebug) userInfo:nil repeats:YES];
 #endif
     if (ABS(_currentAddtionHeight - 0) < 1 ) {
-        [self layoutWithAddtionHeight:_currentAddtionHeight];
+        [self layoutWithAddtionHeight:_currentAddtionHeight animated:NO] ;
     }
 }
 
@@ -450,7 +450,7 @@ static NSString* const kEventNone = @"innone";
 }
 
 
-- (void) layoutWithAddtionHeight:(CGFloat)height
+- (void) layoutWithAddtionHeight:(CGFloat)height animated:(BOOL)animated
 {
     if (ABS(_currentAddtionHeight-height) < 1) {
         if ((ABS(CGRectGetHeight(self.view.bounds) - CGRectGetHeight(_contentView.bounds)) - height) < 1) {
@@ -473,10 +473,21 @@ static NSString* const kEventNone = @"innone";
     } else {
         _toolbar.textInputView.textView.scrollEnabled = NO;
     }
-    _toolbar.frame = toolbarRect;
-    _contentView.frame = contentRect;
-    _emojiViewController.view.frame = addtionRect;
-    _actionViewController.view.frame = addtionRect;
+    
+    void(^AnimationBlock)(void) = ^(void) {
+        _toolbar.frame = toolbarRect;
+        _contentView.frame = contentRect;
+        _emojiViewController.view.frame = addtionRect;
+        _actionViewController.view.frame = addtionRect;
+    };
+    
+    if (animated) {
+        [UIView animateWithDuration:0.25 animations:^{
+            AnimationBlock();
+        } completion:nil];
+    } else {
+        AnimationBlock();
+    }
     if (_inputNoticeView) {
         CGSize size = _inputNoticeView.contentSize;
         CGRect rect = CGRectZero;
@@ -518,9 +529,7 @@ static NSString* const kEventNone = @"innone";
 
 - (void) textViewDidChange:(UITextView *)textView
 {
-    [UIView animateWithDuration:0.25 animations:^{
-        [self layoutWithAddtionHeight:_currentAddtionHeight];
-    }];
+    [self layoutWithAddtionHeight:_currentAddtionHeight animated:YES];
 }
 
 - (void) actualSendText
@@ -554,14 +563,12 @@ static NSString* const kEventNone = @"innone";
 }
 - (void) adjustToolbarHeight
 {
-    [UIView animateWithDuration:0.25 animations:^{
-        [self layoutWithAddtionHeight:_currentAddtionHeight];
-    }];
+        [self layoutWithAddtionHeight:_currentAddtionHeight animated:YES];
 }
 #pragma Layouts
 - (void) layoutWithShowAddtion
 {
-    [self layoutWithAddtionHeight:kDZAdditionHeight];
+    [self layoutWithAddtionHeight:kDZAdditionHeight animated:NO];
     if (self.scrollDirection == 0) {
         [self.rootViewController.tableElement scrollToEnd];
     } else {
@@ -571,7 +578,7 @@ static NSString* const kEventNone = @"innone";
 
 - (void) layoutWithActionShow
 {
-    [self layoutWithAddtionHeight:_actionsEle.preferHeight];
+    [self layoutWithAddtionHeight:_actionsEle.preferHeight animated:NO];
     if (self.scrollDirection == 0) {
         [self.rootViewController.tableElement scrollToEnd];
     } else {
@@ -581,7 +588,7 @@ static NSString* const kEventNone = @"innone";
 
 - (void) layoutWithHiddenAdditon
 {
-    [self layoutWithAddtionHeight:0];
+    [self layoutWithAddtionHeight:0 animated:NO];
 }
 
 
@@ -650,6 +657,6 @@ static NSString* const kEventNone = @"innone";
 - (void) showNoticeView:(DZInputNoticeView*)inputNoticeView{
 
     self.inputNoticeView =  inputNoticeView;
-    [self layoutWithAddtionHeight:_currentAddtionHeight];
+    [self layoutWithAddtionHeight:_currentAddtionHeight animated:NO];
 }
 @end

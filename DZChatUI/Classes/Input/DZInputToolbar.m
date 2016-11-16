@@ -135,7 +135,9 @@ CGFloat const kActionHeight = 271;
 
 - (void) layoutSubviews
 {
+
     [super layoutSubviews];
+    
     _backgroundImageView.frame=self.bounds;
     
     CGSize emojiBtnSize = {0,0};
