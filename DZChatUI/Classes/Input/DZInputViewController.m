@@ -30,6 +30,25 @@
 #import "EKWeakContanier.h"
 #import <MRLogicInjection/MRLogicInjection.h>
 #import <DZGeometryTools/DZGeometryTools.h>
+
+@interface UIView (ForceLayoutSubviews)
+- (void) forceLayoutSubviews;
+@end
+
+@implementation UIView (ForceLayoutSubviews)
+
+- (void) forceLayoutSubviews
+{
+    NSArray* subviews = [self.subviews copy];
+    for (UIView* view in subviews) {
+        [view layoutSubviews];
+        if (view.subviews.count) {
+            [view forceLayoutSubviews];
+        }
+    }
+}
+
+@end
 static CGFloat kDZAdditionHeight = 271;
 
 
@@ -476,7 +495,9 @@ static NSString* const kEventNone = @"innone";
     
     void(^AnimationBlock)(void) = ^(void) {
         _toolbar.frame = toolbarRect;
+        [_toolbar forceLayoutSubviews];
         _contentView.frame = contentRect;
+        [_contentView forceLayoutSubviews];
         _emojiViewController.view.frame = addtionRect;
         _actionViewController.view.frame = addtionRect;
     };
