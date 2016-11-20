@@ -34,3 +34,6 @@
 
 
 
+@interface UIView (ForceLayoutSubviews)
+- (void) forceLayoutSubviews;
+@end

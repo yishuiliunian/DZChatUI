@@ -31,9 +31,7 @@
 #import <MRLogicInjection/MRLogicInjection.h>
 #import <DZGeometryTools/DZGeometryTools.h>
 
-@interface UIView (ForceLayoutSubviews)
-- (void) forceLayoutSubviews;
-@end
+
 
 @implementation UIView (ForceLayoutSubviews)
 
