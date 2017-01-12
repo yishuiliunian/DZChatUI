@@ -27,16 +27,14 @@
 - (void) reloadData
 {
     [_dataController clean];
-    NSDictionary* mapper =[DZEmojiMapper mapper].eomjiMapper;
-    NSDictionary* indexMapper = [DZEmojiMapper mapper].indexMap;
-    NSArray* allKeys = [DZEmojiMapper mapper].indexMap.allKeys;
-    allKeys = [allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+    NSDictionary* indexMapper = [DZEmojiMapper mapper].eomjiMapper;
+    NSString* allKeys = [indexMapper keysSortedByValueUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [obj1 compare:obj2];
-    }];
 
+    }];
     for (NSString* key in allKeys) {
-        NSString* emoji = indexMapper[key];
-        DZEmojiItemElement* item = [[DZEmojiItemElement alloc] initWithEmoji:emoji image:mapper[emoji]];
+        
+        DZEmojiItemElement* item = [[DZEmojiItemElement alloc] initWithEmoji:key fileName:indexMapper[key]];
         [_dataController addObject:item];
     }
     self.collectionView.pagingEnabled = YES;

@@ -33,7 +33,6 @@ CGFloat const kActionHeight = 271;
 @interface DZInputToolbar () <UITextViewDelegate,  K12AudioRecorderDelegate>
 {
     DZVoiceInputView* _voiceInputView;
-    K12AudioRecorder* _audioRecorder;
     CFTimeInterval _recordBeginTime;
     DZInputMiddleView* _inputMiddleView;
 }

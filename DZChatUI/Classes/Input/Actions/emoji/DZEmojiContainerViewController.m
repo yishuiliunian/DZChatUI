@@ -57,7 +57,7 @@ NSString* const kDZEmojiSendKey = @"发送Emoji";
 
 - (void) onHanldeSendEmoji
 {
-    DZEmojiItemElement* item =[[DZEmojiItemElement alloc]initWithEmoji:kDZEmojiSendKey image:nil];
+    DZEmojiItemElement* item =[[DZEmojiItemElement alloc]initWithEmoji:kDZEmojiSendKey fileName:nil];
     if ([self.emojiElement.delegate respondsToSelector:@selector(actionElement:didSelectAction:)]) {
         [self.emojiElement.delegate actionElement:self.emojiElement didSelectAction:item];
     }

@@ -215,6 +215,7 @@ static NSString* const kEventNone = @"innone";
     }];
     
     [emojiState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
+        [wSelf appenChildVC:wSelf.emojiViewController];
         [wSelf.toolbar emojiButtonShowNormal:NO];
         [wSelf emojiButtonToggleEmoji];
         [wSelf layoutWithShowAddtion];
@@ -227,10 +228,15 @@ static NSString* const kEventNone = @"innone";
         [wSelf.toolbar emojiButtonShowNormal:YES];
         [wSelf emojiButtonToggleKeyboard];
         wSelf.isShowAddtions  = NO;
+        [wSelf.emojiViewController willMoveToParentViewController:nil];
+        [wSelf.emojiViewController removeFromParentViewController];
+        [wSelf.emojiViewController.view removeFromSuperview];
+        [wSelf.emojiViewController didMoveToParentViewController:nil];
     }];
     
     
     [actionState setDidEnterStateBlock:^(TKState *state, TKTransition *transition) {
+        [wSelf appenChildVC:wSelf.actionViewController];
         [wSelf.toolbar actionButtonShowNormal:NO];
         [wSelf actionButtonToggleAction];
         [wSelf layoutWithActionShow];
@@ -244,6 +250,11 @@ static NSString* const kEventNone = @"innone";
         [wSelf.toolbar actionButtonShowNormal:YES];
         [wSelf actionButtonToggleKeyboard];
         wSelf.isShowAddtions = NO;
+        //
+        [wSelf.actionViewController willMoveToParentViewController:nil];
+        [wSelf.actionViewController removeFromParentViewController];
+        [wSelf.actionViewController.view removeFromSuperview];
+        [wSelf.actionViewController didMoveToParentViewController:nil];
     }];
     
     
@@ -336,8 +347,6 @@ static NSString* const kEventNone = @"innone";
     _actionsEle.delegate = self;
     _actionViewController = [[DZInputActionViewController alloc] initWithElement:_actionsEle];
 
-    [self appendChildViewController:_emojiViewController];
-    [self appenChildVC:_actionViewController];
     //
 
     _swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeDownGestrue:)];
